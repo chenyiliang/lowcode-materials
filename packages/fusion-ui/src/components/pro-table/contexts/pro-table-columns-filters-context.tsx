@@ -14,7 +14,7 @@ export const useColumnsFilterValue = (options: UseColumnsFilterOptions) => {
     {
       value: options.sort,
       onChange: (sortMap: Record<string, SortValue>, dataIndex: string) => {
-        if (is.function_(options.onSort)) {
+        if (is.function(options.onSort)) {
           options.onSort(dataIndex, sortMap[dataIndex], sortMap);
         }
       },

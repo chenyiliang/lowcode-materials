@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     title: '时间轴',
     screenshot:

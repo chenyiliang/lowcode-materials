@@ -45,7 +45,7 @@ export const dataSourceToMenuDataSource = <Label = DefaultLabel, Value = Default
 export const asyncDataSourceToPromiseDataSource = <Label = DefaultLabel, Value = DefaultValue>(
   asyncDataSource: AsyncDataSource<Label, Value>,
 ): Promise<DataSource<Label, Value>> => {
-  if (is.function_(asyncDataSource)) {
+  if (is.function(asyncDataSource)) {
     return Promise.resolve(asyncDataSource());
   }
   return Promise.resolve(asyncDataSource);

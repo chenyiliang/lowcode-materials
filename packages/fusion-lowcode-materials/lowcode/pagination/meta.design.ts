@@ -1,3 +1,4 @@
+import __req0__ from './snippets';
 export default {
   group: '原子组件',
   componentName: 'Pagination',
@@ -309,5 +310,5 @@ export default {
   },
   icon: '',
   category: '导航',
-  snippets: require('./snippets'),
+  snippets: __req0__,
 };

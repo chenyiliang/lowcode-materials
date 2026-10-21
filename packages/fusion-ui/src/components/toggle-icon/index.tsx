@@ -27,7 +27,7 @@ export interface ToggleIconProps extends React.HtmlHTMLAttributes<HTMLSpanElemen
   size?: IconProps['size'];
 }
 export const ToggleIcon = React.forwardRef<HTMLSpanElement, ToggleIconProps>(
-  ({ title, active, type, size, className, ...props }, ref) => {
+  ({ title, active, type, size = 'small', className, ...props }, ref) => {
     const trigger = (
       <span
         ref={ref}
@@ -47,6 +47,3 @@ export const ToggleIcon = React.forwardRef<HTMLSpanElement, ToggleIconProps>(
     return <Tooltip trigger={trigger}>{title}</Tooltip>;
   },
 );
-ToggleIcon.defaultProps = {
-  size: 'small',
-};

@@ -25,7 +25,8 @@ const Operations: React.FC<OperationProps> = (props) => {
     lastSaveTime,
     renderDefaultBtns,
   } = props;
-  const operationRef = React.useRef();
+  // React 19 要求 useRef 必须传初始值
+  const operationRef = React.useRef<HTMLDivElement | null>(null);
 
   const operationCssPrefix = 'operation-container';
   let classNames = classnames(
@@ -76,15 +77,16 @@ const Operations: React.FC<OperationProps> = (props) => {
       return operation;
     }
     const { content, action, onActionClick, ...otherOperationProps } = operation;
-    let BtnComp;
+    // Form.Submit / Form.Reset / Button 都是组件，用 React.ComponentType 声明后才能在 JSX 里当作标签使用
+    let BtnComp: React.ComponentType<Record<string, any>>;
     if (action === 'submit') {
-      BtnComp = Form.Submit;
+      BtnComp = Form.Submit as React.ComponentType<Record<string, any>>;
       otherOperationProps.validate = true;
       otherOperationProps.htmlType = 'submit';
     } else if (action === 'reset') {
-      BtnComp = Form.Reset;
+      BtnComp = Form.Reset as React.ComponentType<Record<string, any>>;
     } else {
-      BtnComp = Button;
+      BtnComp = Button as React.ComponentType<Record<string, any>>;
     }
     if (onActionClick) {
       otherOperationProps.onClick = onActionClick;
@@ -98,7 +100,9 @@ const Operations: React.FC<OperationProps> = (props) => {
   if ((!defaultBtns || !defaultBtns.length) && (!operationsView || !operationsView.length)) {
     return null;
   }
-  const isLowcodePlaceHolder = operationsView.some((item) => item?.type === 'div');
+  const isLowcodePlaceHolder = operationsView.some(
+    (item: React.ReactElement | null) => item?.type === 'div',
+  );
   return (
     <div ref={operationRef} className={classNames}>
       <ButtonGroup {...buttonGroupProps}>

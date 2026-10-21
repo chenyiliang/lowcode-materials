@@ -1,4 +1,4 @@
-import { ComponentMetadata } from "@alilc/lowcode-types";
+import { IPublicTypeComponentMetadata } from "@alilc/lowcode-types";
 import snippets from './snippets';
 
 export default {
@@ -51,4 +51,4 @@ export default {
     },
   ],
   configure: { component: { isContainer: true }, supports: { style: true } },
-} as ComponentMetadata | any;
+} as IPublicTypeComponentMetadata | any;

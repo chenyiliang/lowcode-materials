@@ -1,68 +1,86 @@
-import React, { useEffect } from 'react';
-import ReactDom from 'react-dom';
+import React, { useCallback, useState } from 'react';
+import type { ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { Balloon } from '@alifd/next';
 
 const targetClass = 'render-wrapper-target';
 const rootClass = 'render-wrapper-root done-note-wrapper';
 
-// 获取DOM真实style的方法
-const getStyle = (obj, attr) => {
-  if (obj.currentStyle) {
-    // 兼容IE
-    return obj.currentStyle[attr];
-  } else {
-    return window.getComputedStyle(obj, null)[attr];
-  }
-};
-
 interface NoteProps {
   note?: string;
   id?: string;
+  children?: ReactNode;
 }
 
+/**
+ * 批注容器：把批注气泡挂到被包裹子元素的真实 DOM 节点里，并给该节点打上
+ * `render-wrapper-target` 样式钩子（样式见同目录 index.scss）。
+ *
+ * React 19 适配：
+ * - 原实现用 `ReactDom.findDOMNode(innerRef)` 拿子节点 DOM —— React 19 已彻底移除
+ *   `findDOMNode`，改为 cloneElement 时注入 callback ref 直接拿节点；
+ * - 原实现用 `ReactDom.render(node, el)` 把气泡渲染进手工 `document.createElement` 出来的
+ *   容器再 `appendChild` —— React 19 已移除 `ReactDOM.render`，改用 `createPortal`，
+ *   这样气泡节点纳入 React 树，`note` 变化时自动更新，不再需要每次 render 都手动重渲；
+ * - 原实现的 `el.ref = ref` 对 DOM 元素是无效赋值（DOM 上没有 ref 属性），转发给调用方的
+ *   ref 实际丢失；现在与内部 callback ref 合并后一并转发。
+ */
 const NoteWrapper: React.ForwardRefRenderFunction<HTMLElement, NoteProps> = (props, ref) => {
-  const el = document.createElement('div');
-  let innerRef = null;
-  el.className = rootClass;
-  el.id = props.id;
-  el.ref = ref;
+  const { note, id, children } = props;
+  const [container, setContainer] = useState<HTMLElement | null>(null);
 
-  const _renderLayer = function() {
-    const { note } = props;
-    const defaultTrigger = <div className="render-wrapper-note">N</div>;
-    const node = (
+  const mergedRef = useCallback(
+    (node: HTMLElement | null) => {
+      if (node && !node.classList.contains(targetClass)) {
+        // 目标元素 position 为 static 时改成 relative，方便内层批注元素定位
+        if (window.getComputedStyle(node).position === 'static') {
+          node.style.position = 'relative';
+        }
+        node.classList.add(targetClass);
+      }
+      setContainer(node);
+
+      if (typeof ref === 'function') {
+        ref(node);
+      } else if (ref) {
+        (ref as { current: HTMLElement | null }).current = node;
+      }
+    },
+    [ref],
+  );
+
+  const mapped = React.Children.map(children, (child) => {
+    let node = child;
+    if (typeof child === 'string') {
+      node = <span>{child}</span>;
+    }
+    if (!React.isValidElement(node)) {
+      return node;
+    }
+    return React.cloneElement(node as React.ReactElement<Record<string, unknown>>, {
+      ref: mergedRef,
+    });
+  });
+
+  const noteLayer = (
+    <div className={rootClass} id={id}>
       <Balloon.Tooltip
-        trigger={defaultTrigger}
+        trigger={<div className="render-wrapper-note">N</div>}
         align="rb"
         triggerType="click"
         popupStyle={{ fontSize: '12px', lineHeight: '1.6', background: '#fff' }}
       >
         {note}
       </Balloon.Tooltip>
-    );
-    ReactDom.render(node, el);
-  };
+    </div>
+  );
 
-  useEffect(() => {
-    _renderLayer();
-    if (innerRef) {
-      const refDom = ReactDom.findDOMNode(innerRef);
-      if (refDom.className.indexOf(targetClass) === -1) {
-        if (getStyle(refDom, 'position') === 'static') {
-          refDom.style.position = 'relative'; // 当target目标组件的position为static时, 则使用relative, 方便内层元素定位
-        }
-        refDom.className += ` ${targetClass}`;
-        refDom.appendChild(el);
-      }
-    }
-  });
-  const { children } = props;
-  const _children = React.Children.map(children, (child) => {
-    let c = child;
-    if (typeof child === 'string') c = <span>{child}</span>;
-    return React.cloneElement(c, { ref: (ref) => (innerRef = ref) });
-  });
-  return _children || <></>;
+  return (
+    <>
+      {mapped ?? null}
+      {container ? createPortal(noteLayer, container) : null}
+    </>
+  );
 };
 
 const RefNoteWrapper = React.forwardRef(NoteWrapper);

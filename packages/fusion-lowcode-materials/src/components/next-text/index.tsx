@@ -1,21 +1,23 @@
 import * as React from 'react';
 import classNames from 'classnames';
 
-export const createTitle = (Tag) => {
+export const createTitle = (Tag: keyof React.JSX.IntrinsicElements) => {
   /**
    * Typography.Title
    * @description 分为 H1, H2, H3, H4, H5, H6 不同的组件，表示不同层级，继承 Typography.Text API
    * @order 1
    */
-  class Title extends React.Component {
+  class Title extends React.Component<TextProps> {
     static defaultProps = {
       prefix: 'next-',
     };
 
+    static displayName: string;
+
     render() {
       const { prefix, className, ...others } = this.props;
       return (
-        <Text
+        <RefText
           {...others}
           component={Tag}
           className={`${className || ''} ${prefix}typography-title`}
@@ -108,9 +110,10 @@ interface TextProps {
  * 文字 字体、大小、行高
  * @param props
  */
-const Text: React.FC<TextProps> = (props, ref) => {
+const Text: React.ForwardRefRenderFunction<HTMLElement, TextProps> = (props, ref) => {
   const {
-    prefix,
+    // React 19 移除了 forwardRef 函数组件的 defaultProps，改为默认参数值
+    prefix = 'next-',
     className,
     type,
     component = 'span',
@@ -123,7 +126,7 @@ const Text: React.FC<TextProps> = (props, ref) => {
   } = props;
 
   let { children } = props;
-  const newType = textTypeMap[type] || type;
+  const newType = type ? (textTypeMap as Record<string, string>)[type] || type : type;
 
   const cls = classNames(className, {
     [`${prefix}text`]: true,
@@ -173,10 +176,6 @@ const Text: React.FC<TextProps> = (props, ref) => {
 
 const RefText = React.forwardRef(Text);
 
-RefText.defaultProps = {
-  prefix: 'next-',
-};
-
 const Paragraph: React.FC<TextProps> = (props) => {
   const { prefix, className, component, ...others } = props;
 
@@ -185,15 +184,19 @@ const Paragraph: React.FC<TextProps> = (props) => {
   if (!isProduction()) {
     console.warn('Warning: Text.Paragraph is deprecated, use P instead');
   }
-  return <Text {...others} className={cls} component={component} />;
+  return <RefText {...others} className={cls} component={component} />;
 };
-// 为了保证兼容性，@alifd/next基础组件中 Typography 组件有的所有子组件、功能，Text也有，但是均不建议使用
-RefText.H1 = createTitle('h1');
-RefText.H2 = createTitle('h2');
-RefText.H3 = createTitle('h3');
-RefText.H4 = createTitle('h4');
-RefText.H5 = createTitle('h5');
-RefText.H6 = createTitle('h6');
-RefText.Paragraph = Paragraph;
 
-export default RefText;
+// 为了保证兼容性，@alifd/next基础组件中 Typography 组件有的所有子组件、功能，Text也有，但是均不建议使用
+// 用 Object.assign 挂静态属性，得到带 H1~H6/Paragraph 的强类型组件（避免 any 断言）。
+const TextWithSubComponents = Object.assign(RefText, {
+  H1: createTitle('h1'),
+  H2: createTitle('h2'),
+  H3: createTitle('h3'),
+  H4: createTitle('h4'),
+  H5: createTitle('h5'),
+  H6: createTitle('h6'),
+  Paragraph,
+});
+
+export default TextWithSubComponents;

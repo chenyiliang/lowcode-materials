@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   group: '原子组件',
   componentName: 'CheckboxGroup',
   title: '复选按钮组',

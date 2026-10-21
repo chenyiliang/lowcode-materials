@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   group: '原子组件',
   componentName: 'Menu.PopupItem',
   title: '自定义弹出内容',

@@ -1,8 +1,8 @@
-import { ComponentMetadata, Snippet } from '@ali/lowcode-types';
+import { IPublicTypeComponentMetadata, IPublicTypeSnippet } from '@alilc/lowcode-types';
 import { hideProp } from '../utils';
 import { operationProps } from '../common';
 
-const ProDialogMeta: ComponentMetadata = {
+const ProDialogMeta: IPublicTypeComponentMetadata = {
   componentName: 'ProDialog',
   title: '对话框',
   group: '精选组件',
@@ -445,7 +445,7 @@ const ProDialogMeta: ComponentMetadata = {
   icon: 'https://img.alicdn.com/imgextra/i1/O1CN01n5JLZG1aBmYZlckSx_!!6000000003292-55-tps-56-56.svg',
   category: '布局容器类',
 };
-const snippets: Snippet[] = [
+const snippets: IPublicTypeSnippet[] = [
   {
     title: '高级对话框',
     screenshot:

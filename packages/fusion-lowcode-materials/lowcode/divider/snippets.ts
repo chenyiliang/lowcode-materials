@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     title: '分隔线',
     screenshot:

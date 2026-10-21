@@ -47,24 +47,35 @@ function renderForm(
   return (
     <>
       {React.Children.map(children, (child, index) => {
+        if (!React.isValidElement(child)) return child;
         const anchorItemProps = formArray.get(`${index}`);
-        const { mode = 'independent', cardProps = {}, ...otherProps } = child.props;
-        const { label = '', htmlId = getId() } = anchorItemProps;
+        // child.props 是 unknown（React.Children.map 返回 ReactNode），需按 element 结构读取
+        const childProps = child.props as {
+          mode?: string;
+          cardProps?: Record<string, unknown>;
+          [key: string]: unknown;
+        };
+        const { mode = 'independent', cardProps = {}, ...otherProps } = childProps;
+        const { label = '', htmlId = getId() } = anchorItemProps ?? {};
+        // React 19 适配：child.ref 不再是稳定入口，原 ref 现在通过 child.props.ref 传入；
+        // 这里注入 callback ref 合并写回 formArrayRef 并转发原 ref。
+        const originalRef = childProps.ref as React.Ref<unknown> | undefined;
         return (
-          <Card title={label}  id={htmlId} className="fusion-ui-anchor-form forms" {...cardProps}>
+          <Card title={label} id={htmlId} className="fusion-ui-anchor-form forms" {...cardProps}>
             {React.cloneElement(child, {
-              ref: (node) => {
+              ref: (node: unknown) => {
                 // Keep your own reference
                 formArrayRef.current[index] = node;
                 // Call the original ref, if any
-                const { ref } = child;
-                if (typeof ref === 'function') {
-                  ref(node);
+                if (typeof originalRef === 'function') {
+                  originalRef(node);
+                } else if (originalRef && typeof originalRef === 'object') {
+                  (originalRef as React.MutableRefObject<unknown>).current = node;
                 }
               },
               ...otherProps,
               mode,
-            })}
+            } as Partial<unknown>)}
           </Card>
         );
       })}

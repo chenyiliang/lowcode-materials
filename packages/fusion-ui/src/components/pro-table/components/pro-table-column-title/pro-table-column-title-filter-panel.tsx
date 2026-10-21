@@ -38,9 +38,9 @@ export const ProTableColumnTitleFilterPanel: React.FC<ProTableColumnFilterPanelP
   filters,
   filterMode,
   filterMenuProps,
-  onClose,
+  onClose = () => {},
   columnFilters,
-  isImmediate,
+  isImmediate = true,
   dataIndex,
   // rtl,
 }) => {
@@ -152,10 +152,6 @@ export const ProTableColumnTitleFilterPanel: React.FC<ProTableColumnFilterPanelP
   );
 };
 
-ProTableColumnTitleFilterPanel.defaultProps = {
-  onClose: () => {},
-  isImmediate: true,
-};
 
 interface FilterMenuProps extends Omit<MenuProps, 'dataSource'> {
   dataSource?: AsyncDataSource;

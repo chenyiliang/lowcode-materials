@@ -2,10 +2,17 @@ import * as ObjUtils from './object';
 
 export { ObjUtils };
 
+// 本文件给 Date.prototype 增加了 format 方法，需要在类型层面补充声明
+declare global {
+  interface Date {
+    format(fmt: string): string;
+  }
+}
+
 /*
  * 数组转字符串
  */
-export function arrayToString(ar, symbolChar) {
+export function arrayToString(ar: Array<string | number>, symbolChar: string): string {
   let result = '';
   for (let i = 0; i < ar.length; i++) {
     result += ar[i] + symbolChar;
@@ -16,34 +23,41 @@ export function arrayToString(ar, symbolChar) {
   return result;
 }
 
-export function getRandomIntInclusive(min, max) {
+export function getRandomIntInclusive(min: number, max: number): number {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min; // The maximum is inclusive and the minimum is inclusive
 }
 
-function getCookie(name) {
-  let arr;
+function getCookie(name: string): string | null {
+  let arr: RegExpMatchArray | null;
   const reg = new RegExp(`(^| )${name}=([^;]*)(;|$)`);
   if ((arr = document.cookie.match(reg))) {
+    // 保持原实现（unescape，虽为遗留全局函数但运行时行为与 decodeURIComponent 不同）
     return unescape(arr[2]);
   } else {
     return null;
   }
 }
 
-export function getLanguage() {
+export function getLanguage(): string | null {
   return getCookie('languageSet');
 }
 
-const loadMap = {};
+const loadMap: Record<string, Promise<unknown>> = {};
 
-export function loadScriptAndCss({ jses = [], csses = [] }, once) {
+export function loadScriptAndCss(
+  { jses = [], csses = [] }: { jses?: string[]; csses?: string[] },
+  // once 参数保留在原签名里（调用方可能传），本实现未使用
+  _once?: boolean,
+): Promise<unknown> {
   const key = `${JSON.stringify(jses)}_${JSON.stringify(csses)}`;
-  if (loadMap[key]) {
+  // 原实现用 `if (loadMap[key])` 判断是否已加载过；loadMap 现在带类型，
+  // Promise 恒为真值，故显式用 key 存在性判断，语义与原先一致（命中缓存直接返回）。
+  if (Object.prototype.hasOwnProperty.call(loadMap, key)) {
     return loadMap[key];
   }
-  const promise = new Promise((resolve, reject) => {
+  const promise = new Promise<boolean>((resolve) => {
     const head = document.getElementsByTagName('head')[0];
     csses
       // .filter(url => !document.querySelector(`link[href="${url}"]`))
@@ -77,10 +91,10 @@ export function loadScriptAndCss({ jses = [], csses = [] }, once) {
 }
 
 // 快速id生成器
-function gid(len) {
+function gid(len?: number): string {
   // 随机ID生成
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
-  const uuid = [];
+  const uuid: string[] = [];
   let i;
   const radix = chars.length;
 
@@ -108,14 +122,14 @@ function gid(len) {
 }
 
 // 随机ID生成
-export function getId() {
+export function getId(): string {
   return gid(8);
 }
 
 // 为日期添加格式化功能
-Date.prototype.format = function (fmt) {
+Date.prototype.format = function (fmt: string): string {
   // author: meizz
-  const o = {
+  const o: Record<string, number> = {
     'M+': this.getMonth() + 1, // 月份
     'd+': this.getDate(), // 日
     'h+': this.getHours(), // 小时
@@ -130,13 +144,13 @@ Date.prototype.format = function (fmt) {
     if (new RegExp(`(${k})`).test(fmt))
       fmt = fmt.replace(
         RegExp.$1,
-        RegExp.$1.length == 1 ? o[k] : `00${o[k]}`.substr(`${o[k]}`.length),
+        RegExp.$1.length == 1 ? `${o[k]}` : `00${o[k]}`.substr(`${o[k]}`.length),
       );
   return fmt;
 };
 
 // 深度克隆
-export function clone(obj) {
+export function clone<T>(obj: T): T {
   let result = obj;
   if (obj != null && typeof obj === 'object') {
     result = JSON.parse(JSON.stringify(obj));
@@ -144,7 +158,10 @@ export function clone(obj) {
   return result;
 }
 
-export function measureText(text, style) {
+export function measureText(
+  text: string,
+  style?: { fontSize?: string; fontFamily?: string } | null,
+): { width: number; height: number } {
   let lDiv = document.getElementById('measureTextFake');
   if (!lDiv) {
     lDiv = document.createElement('div');
@@ -153,8 +170,8 @@ export function measureText(text, style) {
   }
 
   if (style != null) {
-    lDiv.style.fontSize = style.fontSize;
-    lDiv.style.fontFamily = style.fontFamily;
+    if (style.fontSize) lDiv.style.fontSize = style.fontSize;
+    if (style.fontFamily) lDiv.style.fontFamily = style.fontFamily;
   }
   lDiv.style.position = 'absolute';
   lDiv.style.left = '-1000px';
@@ -173,7 +190,7 @@ export function measureText(text, style) {
 }
 
 // 提取url参数
-export function getUrlParam(name) {
+export function getUrlParam(name: string): string | null {
   return (
     decodeURIComponent(
       (new RegExp(`[?|&]${name}=([^&;]+?)(&|#|;|$)`, 'i').exec(location.search) || [
@@ -184,24 +201,27 @@ export function getUrlParam(name) {
   );
 }
 
-export const getByPath = (obj, path = '') => {
+export const getByPath = (obj: unknown, path = ''): unknown => {
   path = path.replace(/\[(\S+?)]/g, '.$1');
-  return path.split('.').reduce((p, c) => p && p[c], obj);
+  return path.split('.').reduce<unknown>((p, c) => (p as Record<string, unknown>) && (p as Record<string, unknown>)[c], obj);
 };
 
-export const setByPath = (obj, path = '', value) => {
+export const setByPath = (obj: unknown, path = '', value: unknown): unknown => {
   path = path.replace(/\[(\S+?)]/g, '.$1');
-  return path.split('.').reduce((p, c, i, arr) => {
+  return path.split('.').reduce<unknown>((p, c, i, arr) => {
     if (i === arr.length - 1 && p) {
-      p[c] = value;
+      (p as Record<string, unknown>)[c] = value;
       return obj;
     }
-    return p && p[c];
+    return (p as Record<string, unknown>) && (p as Record<string, unknown>)[c];
   }, obj);
 };
 
-export function transferProps(props, keys) {
-  const out = {};
+export function transferProps(
+  props: Record<string, unknown>,
+  keys?: string[],
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
   keys &&
     keys.forEach((key) => {
       out[key] = props[key];
@@ -209,13 +229,13 @@ export function transferProps(props, keys) {
   return out;
 }
 
-export function isEditorEnv(props) {
+export function isEditorEnv(props: { __designMode?: string }): boolean {
   const { __designMode } = props;
   return __designMode === 'design';
 }
 
 // 数组去重
-export function uniqueArray(arr) {
+export function uniqueArray<T>(arr: T[]): T[] {
   return arr.filter((item, index, arr) => {
     // 当前元素，在原始数组中的第一个索引==当前索引值，否则返回当前元素
     return arr.indexOf(item, 0) === index;

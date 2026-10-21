@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   group: '原子组件',
   componentName: 'List',
   title: '列表',

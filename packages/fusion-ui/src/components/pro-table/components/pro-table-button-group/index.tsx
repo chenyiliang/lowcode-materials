@@ -31,10 +31,10 @@ export interface ProTableButtonGroupProps<Payload = unknown> extends SpaceProps 
 
 export const ProTableButtonGroup: React.FC<ProTableButtonGroupProps> = ({
   text,
-  maxCount,
+  maxCount = 4,
   payload,
   dataSource,
-  moreMenuButtonProps,
+  moreMenuButtonProps = {},
   ...otherProps
 }) => {
   const i18nBundle = useI18nBundle('ButtonGroup');
@@ -61,10 +61,6 @@ export const ProTableButtonGroup: React.FC<ProTableButtonGroupProps> = ({
       )}
     </Space>
   );
-};
-ProTableButtonGroup.defaultProps = {
-  maxCount: 4,
-  moreMenuButtonProps: {},
 };
 
 ProTableButtonGroup.displayName = 'ProTableButtonGroup';

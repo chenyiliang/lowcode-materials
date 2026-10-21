@@ -1,4 +1,5 @@
-module.exports = {
+import __req0__ from './snippets';
+export default {
   componentName: 'NextText',
   title: '文本',
   category: '基础元素',
@@ -169,5 +170,5 @@ module.exports = {
       ],
     },
   },
-  snippets: require('./snippets'),
+  snippets: __req0__,
 };

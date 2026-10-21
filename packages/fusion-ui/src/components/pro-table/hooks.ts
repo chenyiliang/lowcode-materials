@@ -2,7 +2,9 @@ import * as React from 'react';
 import { useDebounceFn, useFusionTable } from 'ahooks';
 import { ProTableProps, SortValue } from './types';
 import mapValues from 'lodash/mapValues';
-import { BasePaginatedOptions, Result } from 'ahooks/lib/useFusionTable';
+// ahooks 3：useFusionTable 的类型从 ahooks 2 的 Result<Item> / BasePaginatedOptions<Item>
+// 改成 FusionTableResult<TData, TParams> / FusionTableOptions<TData, TParams>。
+import type { FusionTableOptions, FusionTableResult } from 'ahooks/lib/useFusionTable/types';
 import { FilterProps } from '@/components/filter';
 import { Field } from '@alifd/next';
 
@@ -13,7 +15,13 @@ interface TableParams {
 }
 type FilterParams = Record<string, any>;
 
-export interface UseProTableResult<Item> extends Omit<Result<Item>, 'tableProps'> {
+// ahooks 3 的 service 返回 Data = { total, list }，list 为 Item[]
+type FusionData<Item> = { total: number; list: Item[] };
+// ahooks 3 的 useFusionTable 参数是 [分页信息, ...其它]，这里用宽松元组约束
+type FusionParams = [Record<string, any>, ...(unknown[] | [])];
+
+export interface UseProTableResult<Item>
+  extends Omit<FusionTableResult<FusionData<Item>, FusionParams>, 'tableProps'> {
   tableProps: {
     dataSource: Item[];
     loading: boolean;
@@ -51,8 +59,9 @@ export type UseProTableService<Item = unknown> = (params: UseProTableServicePara
   [key: string]: any;
 }>;
 
+// ahooks 3：FusionTableOptions 已经 Omit 掉 form，这里补回 field（老代码用 field 传入 @alifd/next Field 实例）
 export interface UseProTableOptions<Item = unknown>
-  extends Omit<BasePaginatedOptions<Item>, 'paginated'> {
+  extends Omit<FusionTableOptions<FusionData<Item>, FusionParams>, 'field'> {
   field?: Field;
 }
 

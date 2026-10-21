@@ -11,7 +11,7 @@ export interface ProTableColumnTitleSortterProps {
 }
 export const ProTableColumnTitleSortter: React.FC<ProTableColumnTitleSortterProps> = ({
   sortDirections = ['desc', 'asc', 'default'],
-  value,
+  value = 'default',
   onChange,
 }) => {
   const val = value || 'default';
@@ -32,7 +32,3 @@ export const ProTableColumnTitleSortter: React.FC<ProTableColumnTitleSortterProp
   );
 };
 ProTableColumnTitleSortter.displayName = 'ProTableColumnTitleSortter';
-ProTableColumnTitleSortter.defaultProps = {
-  sortDirections: ['desc', 'asc', 'default'],
-  value: 'default',
-};

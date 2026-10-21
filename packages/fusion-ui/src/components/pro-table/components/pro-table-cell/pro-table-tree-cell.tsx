@@ -1,8 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Icon } from '@alifd/next';
 
 import { ProTableCell, ProTableCellProps } from './pro-table-cell';
+import {
+  ProTableTreeContext,
+  ProTableTreeContextValue,
+} from '../../contexts/pro-table-tree-context';
 
 export interface ProTableTreeCellProps extends ProTableCellProps {
   indent: number;
@@ -46,20 +49,20 @@ export class ProTableTreeCell extends React.Component<ProTableTreeCellProps> {
     indent: 20,
   };
 
-  static contextTypes = {
-    openTreeRowKeys: PropTypes.array,
-    indent: PropTypes.number,
-    onTreeNodeClick: PropTypes.func,
-    isTree: PropTypes.bool,
-    rowSelection: PropTypes.object,
-  };
+  // React 19 适配：老实现用 legacy context（static contextTypes + this.context），
+  // 由 @alifd/next TreeTable 的 getChildContext 提供。React 19 已移除 legacy context，
+  // 改为 React.createContext —— 这里用 static contextType 消费 ProTableTreeContext，
+  // 由 ProTableBase 用 Provider 提供（见 contexts/pro-table-tree-context.tsx）。
+  static contextType = ProTableTreeContext;
 
-  onTreeNodeClick = (record, e) => {
+  declare context: ProTableTreeContextValue;
+
+  onTreeNodeClick = (record: any, e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation();
-    this.context.onTreeNodeClick(record);
+    this.context.onTreeNodeClick?.(record);
   };
 
-  expandedKeydown = (record, e) => {
+  expandedKeydown = (record: any, e: React.KeyboardEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -70,7 +73,12 @@ export class ProTableTreeCell extends React.Component<ProTableTreeCellProps> {
 
   render() {
     const { colIndex, record, prefix, primaryKey, locale, rtl, children } = this.props;
-    const { openTreeRowKeys: openRowKeys, indent, isTree, rowSelection } = this.context;
+    const {
+      openTreeRowKeys: openRowKeys = [],
+      indent,
+      isTree,
+      rowSelection,
+    } = this.context || ({} as ProTableTreeContextValue);
     const treeArrowNodeIndex = rowSelection ? 1 : 0;
     let firstCellStyle;
     let treeArrowNode;
@@ -90,7 +98,7 @@ export class ProTableTreeCell extends React.Component<ProTableTreeCellProps> {
           treeArrowNode = (
             <Icon
               className={`${prefix}table-tree-arrow`}
-              type={treeArrowType}
+              type={treeArrowType as string}
               size="xs"
               rtl={rtl}
               onClick={(e) => this.onTreeNodeClick(record, e)}
@@ -98,14 +106,14 @@ export class ProTableTreeCell extends React.Component<ProTableTreeCellProps> {
               role="button"
               tabIndex={0}
               aria-expanded={hasExpanded}
-              aria-label={hasExpanded ? locale.expanded : locale.folded}
+              aria-label={hasExpanded ? locale?.expanded : locale?.folded}
             />
           );
         }
       }
     }
     return (
-      <ProTableCell {...this.props} innerStyle={firstCellStyle} isIconLeft={!!treeArrowNode}>
+      <ProTableCell {...this.props} innerStyle={firstCellStyle ?? {}} isIconLeft={!!treeArrowNode}>
         {children}
         {treeArrowNode}
       </ProTableCell>

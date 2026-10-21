@@ -18,7 +18,7 @@ export function useFiledState<Value = unknown, OnChangeOtherArgs extends any[] =
 
   const originSetState = useRef<SetFiledState<Value, OnChangeOtherArgs>>();
   originSetState.current = (action, ...args) => {
-    const val = is.function_(action) ? action(value) : action;
+    const val = is.function(action) ? action(value) : action;
     if (!isCtrl) {
       setValue(val);
     }

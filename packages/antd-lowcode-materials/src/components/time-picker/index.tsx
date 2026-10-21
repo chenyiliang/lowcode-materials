@@ -1,7 +1,7 @@
 import { TimePicker as OriginalTimePicker } from 'antd';
-import { withMomentProps } from '../../utils/hoc';
+import { withDayjsProps } from '../../utils/hoc';
 
-const TimePicker = withMomentProps(OriginalTimePicker, [
+const TimePicker = withDayjsProps(OriginalTimePicker, [
   'defaultValue',
   'value',
 ]);

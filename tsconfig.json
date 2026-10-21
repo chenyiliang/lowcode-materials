@@ -1,31 +1,24 @@
 {
-  "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "importHelpers": true,
-    "jsx": "react",
-    "esModuleInterop": true,
-    "sourceMap": true,
-    "baseUrl": "./",
-    "strict": true,
-    "paths": {
-      "@/*": ["components/*"]
-    },
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "allowJs": true
-  },
+  "extends": "../tsconfig.base.json",
+  // 说明（CONVENTIONS §4.5）：这里刻意**不**用 paths 把 `@alilc/xxx` 映射到
+  // 其它仓库的 src。跨仓库类型解析一律走 workspace symlink → 上游包 dist/*.d.ts，
+  // 否则会把外部仓库源码拉进本仓库 rootDir（TS6059）并传染别人的类型错误。
+  //
+  // include 范围与参考实现 lowcode-datasource 及全部兄弟仓库保持一致：只 typecheck
+  // 各包 src（发布产物）。lowcode/ 是物料 schema 数据，由 Vite 打包进 meta 产物
+  // （类型擦除，不做 tsc 校验），与老 babel 构建管线行为一致 —— 它从来就没被 tsc 检查过。
+  // 各包 tsconfig.json 同样只 include 自己的 src；`@/` 别名在包级声明。
+  "include": ["packages/*/src", "typings.d.ts"],
   "exclude": [
-    "node_modules",
-    "lib",
-    "es",
-    "docs",
-    "public",
-    "scripts",
-    "dist",
-    "typings",
+    "**/node_modules",
+    "**/dist",
+    "**/build",
+    "**/lib",
+    "**/es",
+    "**/.tmp",
+    "packages/*/docs",
+    "packages/*/demo",
     "**/__test__",
-    "test"
+    "**/test"
   ]
 }

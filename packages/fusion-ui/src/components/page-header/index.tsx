@@ -154,7 +154,16 @@ const renderChildren = (prefixCls: string, children: React.ReactNode) => (
   <div className={`${prefixCls}-content`}>{children}</div>
 );
 
-const PageHeader: React.FC<PageHeaderProps> = (props: PageHeaderProps) => {
+const PageHeader: React.FC<PageHeaderProps> = (rawProps: PageHeaderProps) => {
+  // React 19 移除了函数组件的 defaultProps。原 defaultProps 会被注入到 props 后
+  // 透传给 renderTitle（其读取 showAvatar / showActions），所以这里显式合并默认值，
+  // 保持下游读取行为不变。
+  const props: PageHeaderProps = {
+    showBreadcrumb: true,
+    showAvatar: false,
+    showActions: false,
+    ...rawProps,
+  };
   const [compact, updateCompact] = React.useState(false);
   const onResize = ({ width }: { width: number }) => {
     updateCompact(width < 768);
@@ -215,13 +224,6 @@ const PageHeader: React.FC<PageHeaderProps> = (props: PageHeaderProps) => {
       </div>
     </ResizeObserver>
   );
-};
-
-PageHeader.defaultProps = {
-  showBreadcrumb: true,
-  showAvatar: false,
-  showOperation: true,
-  showActions: false,
 };
 
 export { PageHeader };

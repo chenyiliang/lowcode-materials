@@ -1,6 +1,6 @@
-import { ComponentMetadata } from '@ali/lowcode-types';
+import { IPublicTypeComponentMetadata } from '@alilc/lowcode-types';
 
-const ProTableSlotMeta: ComponentMetadata = {
+const ProTableSlotMeta: IPublicTypeComponentMetadata = {
   componentName: 'ProTableSlot',
   title: 'ProTableSlot',
   docUrl: '',

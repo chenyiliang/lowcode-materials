@@ -8,7 +8,8 @@ import { isEditorEnv } from '@/utils';
 
 const { Tooltip } = Balloon;
 const noop = () => {};
-const isValidFunction = (func: any) => typeof func === 'function';
+// 用类型谓词替代 `typeof x === 'function'` 判断，使调用点在 isValidFunction(x) 为真时收窄类型
+const isValidFunction = <T,>(func: T | undefined): func is T => typeof func === 'function';
 const ACTION_MAP: Record<string | number, any> = {
   ok: noop,
   cancel: noop,
@@ -18,19 +19,39 @@ function getAction(action: string | number) {
   return ACTION_MAP[action] || noop;
 }
 
-export interface DialogProps extends NextDialogProps {
+// @alifd/next 的 DialogProps 是联合类型（DialogV1Props | DialogV2Props），
+// interface 无法 extends 联合类型（TS2312），故用交叉类型声明。
+export type DialogProps = NextDialogProps & {
   /**
    * 弹窗大小
    */
   size?: 'small' | 'medium' | 'large' | 'autoLarge';
   operations?: object[];
   operationConfig?: object;
-  status?: string;
+  // status 透传给 @alifd/next Message 的 type，故约束为 Message 支持的取值
+  status?: 'success' | 'warning' | 'error' | 'notice' | 'help' | 'loading';
   dialogType?: string;
   explanation?: string;
   iconType?: string;
   hasTips?: boolean;
-}
+  /**
+   * 以下属性 next 的 DialogProps 联合类型里并非每个分支都声明，但运行期由本组件消费，
+   * 这里显式补全（保持与老实现一致的取值方式）。
+   */
+  className?: string;
+  children?: React.ReactNode;
+  title?: React.ReactNode;
+  footer?: React.ReactNode;
+  width?: string | number;
+  rtl?: boolean;
+  messageProps?: Record<string, unknown>;
+  explanationTooltipProps?: Record<string, unknown>;
+  onOk?: (event: object) => void;
+  onCancel?: (event: object) => void;
+  onClose?: (trigger: string, event: object) => void;
+  /** 低代码设计态标记（isEditorEnv 读取），运行期由引擎注入 */
+  __designMode?: string;
+};
 
 export interface DialogOperationsProps extends OperationProps {
   onOk?: any;
@@ -105,15 +126,12 @@ function Dialog(props: DialogProps) {
     footerElement = <DialogOperations {...operationsProps} />;
   }
 
-  if (typeof width !== 'undefined') {
-    otherProps.width = width;
-  }
-
   // class 处理
   const classes = cx({
     'fusion-ui-dialog': true,
     [`fusion-ui-dialog-${size}`]: typeof width === 'undefined',
-    [className]: !!className,
+    // className 可能为 undefined，计算属性名不能是 undefined，故仅在存在时加入
+    ...(className ? { [className]: true } : {}),
   });
 
   // 如果指定了 width ，则 size 不生效；
@@ -145,16 +163,21 @@ function Dialog(props: DialogProps) {
     );
 
   return (
-    <NextDialog v2 title={titleElement} footer={footerElement} className={classes} {...otherProps}>
+    <NextDialog
+      v2
+      title={titleElement}
+      footer={footerElement}
+      className={classes}
+      width={typeof width !== 'undefined' ? (width as string | number) : undefined}
+      {...(otherProps as Partial<NextDialogProps>)}
+    >
       {children}
     </NextDialog>
   );
 }
 
-export class InnerProDialog extends React.Component {
+export class InnerProDialog extends React.Component<DialogProps, DialogState> {
   static displayName: 'ProDialog';
-
-  static propTypes: DialogProps;
 
   constructor(props: DialogProps) {
     super(props);
@@ -164,7 +187,7 @@ export class InnerProDialog extends React.Component {
     };
   }
 
-  onOk = (event: Object) => {
+  onOk = (event: object) => {
     const { onOk } = this.props;
     if (isValidFunction(onOk)) {
       onOk(event);
@@ -175,7 +198,7 @@ export class InnerProDialog extends React.Component {
     }
   };
 
-  onCancel = (event: Object) => {
+  onCancel = (event: object) => {
     const { onCancel } = this.props;
     if (isValidFunction(onCancel)) {
       onCancel(event);
@@ -184,7 +207,7 @@ export class InnerProDialog extends React.Component {
     this.setState({ visible: false });
   };
 
-  onClose = (trigger: String, event: Object) => {
+  onClose = (trigger: string, event: object) => {
     const { onClose } = this.props;
     if (isValidFunction(onClose)) {
       onClose(trigger, event);

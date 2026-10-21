@@ -5,10 +5,11 @@ import * as React from 'react';
  */
 const checkComName = <Props = unknown>(
   checkElement: React.ReactNode,
-  sourceComp: React.ComponentType<Props>,
+  // sourceComp 仅在未显式传 compDisplayName 时用于取其 displayName，故允许为 null
+  sourceComp: React.ComponentType<Props> | null,
   compDisplayName?: string | string[],
 ): checkElement is React.ReactElement<Props> => {
-  const compDisplayNames = compDisplayName || [sourceComp.displayName?.toLowerCase()];
+  const compDisplayNames = compDisplayName || [sourceComp?.displayName?.toLowerCase()];
 
   const displayNames: string[] = (
     Array.isArray(compDisplayNames) ? compDisplayNames : [compDisplayNames]

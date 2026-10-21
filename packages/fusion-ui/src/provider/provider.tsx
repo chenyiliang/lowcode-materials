@@ -16,7 +16,6 @@ import {
 } from '@/provider/contexts/theme-context';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { ConfigProvider } from '@alifd/next';
 import enUS from '@alifd/next/lib/locale/en-us';
 import zhCN from '@alifd/next/lib/locale/zh-cn';
@@ -27,12 +26,17 @@ export const GlobalConfigProvider: React.FC<{
   theme?: ThemeType;
   language?: LanguageType;
   i18nBundles?: CustomI18nBundles;
+  // @types/react 19 起 React.FC 不再隐式包含 children，需显式声明
+  children?: React.ReactNode;
 }> = ({ theme: propsTheme, language, i18nBundles, children }) => {
   const themeContextValue = useThemeContextValue(propsTheme);
   const localeContextValue = useLocaleContextValue(language, i18nBundles);
 
   React.useEffect(() => {
-    themeContextValue.setTheme(propsTheme);
+    // propsTheme 可选，未指定时不覆盖当前主题（setTheme 需要 ThemeType）
+    if (propsTheme) {
+      themeContextValue.setTheme(propsTheme);
+    }
   }, [propsTheme]);
 
   return (
@@ -46,10 +50,7 @@ export const GlobalConfigProvider: React.FC<{
   );
 };
 
-GlobalConfigProvider.propTypes = {
-  theme: PropTypes.oneOf(['dark', 'light']),
-  language: PropTypes.oneOf(['zh-CN', 'en-US']),
-};
+// React 19 移除了 propTypes，GlobalConfigProvider 的属性类型已由上面的 React.FC<{...}> 描述。
 
 interface GlobalConfigOptions {
   /**
@@ -67,6 +68,7 @@ interface GlobalHocOption extends GlobalConfigOptions {
 
 export const useGlobal = (options?: GlobalConfigOptions) => {
   const localeContextValue = React.useContext(LocaleContext);
+  // 保持无条件调用（rules of hooks）；i18nBundleName 可选，未指定时 hook 内部返回 undefined
   const i18nBundle = useI18nBundle(options?.i18nBundleName);
   return React.useMemo(
     () => ({
@@ -81,7 +83,7 @@ export function withGlobal<Props>(
   ReactComp: React.ComponentType<Props & Partial<GlobalConfig>>,
   options?: GlobalHocOption,
 ) {
-  const { transform, ...others } = options;
+  const { transform, ...others } = options ?? {};
   const Comp = React.forwardRef<unknown, Props>((props, ref) => {
     const globalConfig = useGlobal(others);
     const newProps = transform ? transform(props) : props;
@@ -107,7 +109,7 @@ export function withBizGlobal<Props>(
     i18nBundles: any;
   },
 ) {
-  const { i18nBundles = {} } = options;
+  const { i18nBundles = {} } = options ?? {};
   const Comp = React.forwardRef<unknown, Props>((props, ref) => {
     const language = useLanguage();
 
@@ -128,7 +130,9 @@ export function withBizGlobal<Props>(
       ref,
     };
 
-    return <ReactComp {...componentProps} />;
+    // 泛型 HOC 向被包裹组件注入 language / i18nBundle，而 Props 是任意类型，
+    // TS 无法证明注入后的对象满足 Props，这里按 ReactComp 的入参类型断言（HOC 惯例）。
+    return <ReactComp {...(componentProps as Props & Partial<LocaleContextValue>)} />;
   });
 
   hoistNonReactStatics(Comp, ReactComp);

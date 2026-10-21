@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     screenshot:
       'https://img.alicdn.com/imgextra/i3/O1CN01IAguy71sM0UGdpChd_!!6000000005751-55-tps-56-56.svg',

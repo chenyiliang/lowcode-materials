@@ -1,6 +1,6 @@
-import { ComponentMetadata } from '@ali/lowcode-types';
+import { IPublicTypeComponentMetadata } from '@alilc/lowcode-types';
 
-const FilterItemMeta: ComponentMetadata = {
+const FilterItemMeta: IPublicTypeComponentMetadata = {
   componentName: 'FilterItem',
   title: 'FilterItem',
   docUrl: '',

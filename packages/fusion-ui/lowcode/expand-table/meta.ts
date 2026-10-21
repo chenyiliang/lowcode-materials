@@ -1,4 +1,4 @@
-import { ComponentMetadata, Snippet } from '@ali/lowcode-types';
+import { IPublicTypeComponentMetadata, IPublicTypeSnippet } from '@alilc/lowcode-types';
 import { proTableMeta } from '../pro-table/pro-table-meta';
 import { mockProTableRow, mockId } from '../pro-table/utils';
 import { isJSExpression } from '../utils';
@@ -157,7 +157,7 @@ const props = proTableMeta.configure.props.map((item) => {
   return item;
 });
 
-const ExpandTableMeta: ComponentMetadata = {
+const ExpandTableMeta: IPublicTypeComponentMetadata = {
   componentName: 'ExpandTable',
   title: '母子表格',
   docUrl: '',
@@ -190,7 +190,7 @@ const ExpandTableMeta: ComponentMetadata = {
     component: {},
   },
 };
-const snippets: Snippet[] = [
+const snippets: IPublicTypeSnippet[] = [
   {
     title: '母子表格',
     screenshot:

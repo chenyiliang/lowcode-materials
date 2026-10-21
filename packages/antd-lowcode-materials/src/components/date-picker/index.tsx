@@ -1,16 +1,16 @@
 import { DatePicker as OriginalDatePicker } from 'antd';
-import { withMomentProps } from '../../utils/hoc';
+import { withDayjsProps } from '../../utils/hoc';
 
 const OriginalRangePicker = OriginalDatePicker.RangePicker;
 
-const DatePicker = withMomentProps(OriginalDatePicker, [
+const DatePicker = withDayjsProps(OriginalDatePicker, [
   'defaultPickerValue',
   'defaultValue',
   'showTime.defaultValue',
   'value',
 ]);
 
-const RangePicker = withMomentProps(OriginalRangePicker, [
+const RangePicker = withDayjsProps(OriginalRangePicker, [
   'defaultPickerValue',
   'defaultValue',
   'showTime.defaultValue',

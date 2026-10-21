@@ -1,4 +1,5 @@
-module.exports = {
+import __req0__ from './snippets';
+export default {
   group: '原子组件',
   componentName: 'Divider',
   title: '分隔符',
@@ -74,5 +75,5 @@ module.exports = {
   ],
   icon: '',
   category: '通用',
-  snippets: require('./snippets'),
+  snippets: __req0__,
 };

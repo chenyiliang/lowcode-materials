@@ -1,5 +1,5 @@
 import React, { ComponentType, forwardRef, Ref } from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { get, set, has } from 'lodash';
 
 function convertProps(
@@ -71,10 +71,14 @@ export function withSingleFunctionChild(Comp: ComponentType<any>) {
 }
 
 /**
- * moment对象在序列化后会被转为字符串
- * 需要让日期类组件支持接受字符串值
+ * dayjs 对象在序列化后会被转为字符串（低代码 schema 里存的就是字符串）
+ * 需要让日期类组件支持接受字符串值。
+ *
+ * 迁移说明：antd 5/6 起日期组件内部用 dayjs 取代了 moment，
+ * 因此这里把 moment.isMoment / moment(v) 换成 dayjs.isDayjs / dayjs(v)。
+ * dayjs 是 antd 6 的 peer 依赖，值对象为不可变的 Dayjs 实例，语义与 moment 一致。
  */
-export function withMomentProps(
+export function withDayjsProps(
   Comp: ComponentType<any>,
   needsConvert = ['value', 'defaultValue'],
 ) {
@@ -82,12 +86,17 @@ export function withMomentProps(
     const convertedProps = convertProps(props, needsConvert, prop => {
       if (prop) {
         if (Array.isArray(prop)) {
-          return prop.map(v => (moment.isMoment(v) ? v : moment(v)));
+          return prop.map(v => (dayjs.isDayjs(v) ? v : dayjs(v)));
         }
-        return moment.isMoment(prop) ? prop : moment(prop);
+        return dayjs.isDayjs(prop) ? prop : dayjs(prop);
       }
     });
 
     return <Comp {...(props as any)} {...(convertedProps as any)} />;
   };
 }
+
+/**
+ * @deprecated 用 withDayjsProps。保留别名以免外部引用断裂。
+ */
+export const withMomentProps = withDayjsProps;

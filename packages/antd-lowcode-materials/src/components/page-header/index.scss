@@ -1,0 +1,97 @@
+// antd 4 PageHeader 的布局样式复刻（antd 5/6 已从核心包移除该组件）
+.ant-page-header {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 16px 24px;
+  color: rgba(0, 0, 0, 0.88);
+  font-size: 14px;
+  line-height: 1.5715;
+  list-style: none;
+  background-color: #fff;
+  position: relative;
+
+  &.ant-page-header-ghost {
+    background-color: transparent;
+  }
+
+  .ant-breadcrumb {
+    margin-bottom: 12px;
+  }
+
+  .ant-page-header-heading {
+    display: flex;
+    justify-content: space-between;
+
+    .ant-page-header-heading-left {
+      display: flex;
+      align-items: center;
+      margin: 4px 0;
+      overflow: hidden;
+    }
+
+    .ant-page-header-heading-title {
+      margin-right: 12px;
+      margin-bottom: 0;
+      color: rgba(0, 0, 0, 0.88);
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 32px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .ant-page-header-heading-sub-title {
+      margin-right: 12px;
+      color: rgba(0, 0, 0, 0.45);
+      font-size: 14px;
+      line-height: 1.5715;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .ant-page-header-heading-tags {
+      margin: 4px 0;
+      float: right;
+    }
+
+    .ant-page-header-heading-extra {
+      margin: 4px 0;
+      white-space: nowrap;
+
+      > * {
+        margin-left: 12px;
+        white-space: unset;
+      }
+
+      > *:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+
+  .ant-page-header-back-button {
+    margin-right: 12px;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.88);
+
+    &:hover {
+      color: #4096ff;
+    }
+  }
+
+  .ant-page-header-heading .ant-avatar {
+    margin-right: 12px;
+  }
+
+  .ant-page-header-content {
+    padding-top: 12px;
+  }
+
+  .ant-page-header-footer {
+    margin-top: 16px;
+  }
+}

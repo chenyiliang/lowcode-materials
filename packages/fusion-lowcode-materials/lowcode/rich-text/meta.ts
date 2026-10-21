@@ -1,4 +1,5 @@
-module.exports = {
+import __req0__ from './snippets';
+export default {
   componentName: 'RichText',
   title: '需求占位',
   npm: {
@@ -83,6 +84,6 @@ module.exports = {
   icon: 'https://img.alicdn.com/imgextra/i3/O1CN01G7Lc8e1pZL7p4cdKc_!!6000000005374-2-tps-112-112.png',
   category: '基础元素',
   group: '精选组件',
-  snippets: require('./snippets'),
+  snippets: __req0__,
   hidden: true,
 };

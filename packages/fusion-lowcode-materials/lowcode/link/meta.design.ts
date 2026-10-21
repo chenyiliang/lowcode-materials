@@ -1,3 +1,4 @@
+import __req0__ from './snippets';
 export default {
   group: '原子组件',
   componentName: 'Link',
@@ -199,5 +200,5 @@ export default {
   icon:
     'https://img.alicdn.com/imgextra/i4/O1CN01aGiT9s1ScmzUSmn4s_!!6000000002268-55-tps-56-56.svg',
   category: '通用',
-  snippets: require('./snippets'),
+  snippets: __req0__,
 };

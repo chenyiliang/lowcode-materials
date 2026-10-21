@@ -27,8 +27,16 @@ interface IRichTextProps {
  */
 const RichText: React.ForwardRefRenderFunction<HTMLImageElement, IRichTextProps> = (props, ref) => {
   const {
-    content = { subject: '', description: '' },
+    // React 19 移除了函数组件的 defaultProps。原 defaultProps.content（需求示例）优先级
+    // 高于此处的解构默认值，这里把示例内容合并进解构默认值，保持运行期一致。
+    content = {
+      subject: '需求标题',
+      hideTitle: false,
+      description:
+        '<div><span>- 你可以在这里描述需求</span><br /><span>- 或者粘贴需求截图</span></div>',
+    },
     maxHeight = 'auto',
+    className = '',
     ...others
   }: IRichTextProps = props;
   const oldType = typeof content === 'string';
@@ -36,7 +44,7 @@ const RichText: React.ForwardRefRenderFunction<HTMLImageElement, IRichTextProps>
   const title = (!oldType && content?.subject) || '';
   const hideTitle = oldType || content?.hideTitle;
   return (
-    <div {...others} ref={ref}>
+    <div {...others} className={className} ref={ref}>
       {!hideTitle && (
         <div style={{ fontSize: '30px', color: '#333', lineHeight: '32px' }}>
           <span>{title}</span>
@@ -54,15 +62,5 @@ const RichText: React.ForwardRefRenderFunction<HTMLImageElement, IRichTextProps>
 };
 
 const RefRichText = React.forwardRef(RichText);
-
-RefRichText.defaultProps = {
-  content: {
-    subject: '需求标题',
-    hideTitle: false,
-    description:
-      '<div><span>- 你可以在这里描述需求</span><br /><span>- 或者粘贴需求截图</span></div>',
-  },
-  className: '',
-};
 
 export default RefRichText;

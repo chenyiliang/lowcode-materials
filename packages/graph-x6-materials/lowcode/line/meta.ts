@@ -1,6 +1,6 @@
-import { ComponentMetadata, Snippet } from '@alilc/lowcode-engine';
+import { IPublicTypeComponentMetadata, IPublicTypeSnippet } from '@alilc/lowcode-types';
 
-const LineMeta: ComponentMetadata = {
+const LineMeta: IPublicTypeComponentMetadata = {
   componentName: 'Line',
   title: '连接线',
   docUrl: '',
@@ -23,7 +23,7 @@ const LineMeta: ComponentMetadata = {
     }
   }
 };
-const snippets: Snippet[] = [
+const snippets: IPublicTypeSnippet[] = [
   {
     title: '连接线',
     screenshot: '',

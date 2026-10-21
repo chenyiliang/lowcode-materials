@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   group: '原子组件',
   componentName: 'ResponsiveGrid',
   title: '布局容器',

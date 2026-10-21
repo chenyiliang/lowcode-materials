@@ -54,12 +54,13 @@ const Segment: React.FC<SegmentProps> = ({
   className,
   style,
   dataSource,
-  onChange,
+  // React 19 移除了函数组件的 defaultProps，改为解构默认值
+  onChange = () => {},
   value: propsValue,
   defaultValue,
   fullWidth,
-  size,
-  type,
+  size = 'medium',
+  type = 'normal',
 }) => {
   const [selectedDom, setSelectedDom] = useState(null);
   const [value, setValue] = useState(defaultValue);
@@ -128,12 +129,6 @@ const Segment: React.FC<SegmentProps> = ({
       />
     </div>
   );
-};
-
-Segment.defaultProps = {
-  onChange: () => {},
-  size: 'medium',
-  type: 'normal',
 };
 
 Segment.displayName = 'Segment';

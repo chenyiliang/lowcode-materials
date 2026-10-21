@@ -34,12 +34,20 @@ export interface ProTableColumnFormatterOptions {
   };
   /** 获取真实参数 */
   getCellOptions: (record: any) => any[];
-  /** 格式化 */
+  /**
+   * 格式化：接收一个 cell 渲染函数 (value, ...args) => ReactNode，
+   * 返回一个符合 next Table cell 签名的函数 (value, rowIndex, record) => ReactNode。
+   */
   formatterCellFactory: <Value, Args extends unknown[]>(
     cell: (value: Value, ...args: Args) => React.ReactNode,
-  ) => React.ReactNode;
-  /** 高阶格式化 */
-  cellFactory: (cell: (options: CellFactoryCellOptions) => React.ReactNode) => React.ReactNode;
+  ) => (value: any, rowIndex: number, record: any) => React.ReactNode;
+  /**
+   * 高阶格式化：接收一个 cell 渲染函数 (options) => ReactNode，
+   * 返回一个符合 next Table cell 签名的函数 (value, rowIndex, record) => ReactNode。
+   */
+  cellFactory: (
+    cell: (options: CellFactoryCellOptions) => React.ReactNode,
+  ) => (value: any, rowIndex: number, record: any) => React.ReactNode;
 }
 export type ProTableColumnFormatter = (
   options: ProTableColumnFormatterOptions,
@@ -49,7 +57,7 @@ class ProTableColumnFormatterManager {
   columnFormatters: Record<string, ProTableColumnFormatter> = {};
   /** 注册列格式化类型 */
   registerColumnFormatter = (name: string, columnFormatter: ProTableColumnFormatter) => {
-    if (is.function_(columnFormatter)) {
+    if (is.function(columnFormatter)) {
       this.columnFormatters[name] = columnFormatter;
       return;
     }
@@ -77,7 +85,8 @@ export const { registerColumnFormatter, registerColumnFormatters, formatColumnPr
   proTableColumnFormatterManager;
 
 const getFormatterOptions = (column: ProTableColumnProps): ProTableColumnFormatterOptions => {
-  const formatTypeParser = parseFormatType(column.formatType);
+  // formatType 可选，缺省时按原样解析会抛错，这里回退为空串（解析失败会被 catch 成默认类型）
+  const formatTypeParser = parseFormatType(column.formatType ?? '');
   if (is.array(column.formatOptions)) {
     formatTypeParser.rawOptions = [...formatTypeParser.rawOptions, ...column.formatOptions];
   }
@@ -89,7 +98,8 @@ const getFormatterOptions = (column: ProTableColumnProps): ProTableColumnFormatt
     ? asyncDataSourceToPromiseDataSource(column.dataSource)
     : undefined;
   const cellFactory =
-    (cell: (options: CellFactoryCellOptions) => React.ReactNode) => (value, rowIndex, record) =>
+    (cell: (options: CellFactoryCellOptions) => React.ReactNode) =>
+    (value: any, rowIndex: number, record: any) =>
       cell({
         getLabel: (props) =>
           dataSource ? (
@@ -108,8 +118,10 @@ const getFormatterOptions = (column: ProTableColumnProps): ProTableColumnFormatt
         getCellOptions: () => getCellOptions(record),
         getCellColor: () => getColorWithFormat(value, column.formatColor),
       });
-  const formatterCellFactory = (cell) => (value, rowIndex, record) =>
-    cell(value, ...(getCellOptions(record) as any));
+  const formatterCellFactory =
+    (cell: (value: any, ...args: any[]) => React.ReactNode) =>
+    (value: any, rowIndex: number, record: any) =>
+      cell(value, ...(getCellOptions(record) as any));
   return {
     column,
     formatTypeParser,
@@ -141,7 +153,8 @@ const parseFormatType = (raw: string): ProTableColumnFormatterOptions['formatTyp
     };
   } catch (error) {
     const err = new Error(`parseformatType: ${raw} 解析错误`);
-    err.stack = error?.stack;
+    // catch 的 error 是 unknown（strict 模式），按 Error 结构读取 stack
+    err.stack = (error as { stack?: string })?.stack;
     throw err;
   }
 };

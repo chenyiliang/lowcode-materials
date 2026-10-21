@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     title: '树型选择控件',
     screenshot:

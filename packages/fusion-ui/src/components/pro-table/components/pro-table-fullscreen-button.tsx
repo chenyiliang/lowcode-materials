@@ -27,7 +27,7 @@ export const ProTableFullscreenButton: React.FC<ProTableFullscreenButtonProps> =
       if (ele) {
         ele.classList.add('fullscreen');
       }
-      if (is.function_(onFullscreenStateChange)) {
+      if (is.function(onFullscreenStateChange)) {
         onFullscreenStateChange(true);
       }
     },
@@ -37,7 +37,7 @@ export const ProTableFullscreenButton: React.FC<ProTableFullscreenButtonProps> =
         ele.classList.remove('fullscreen');
       }
 
-      if (is.function_(onFullscreenStateChange)) {
+      if (is.function(onFullscreenStateChange)) {
         onFullscreenStateChange(false);
       }
     },

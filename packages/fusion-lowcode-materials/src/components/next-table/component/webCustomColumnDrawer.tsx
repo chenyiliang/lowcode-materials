@@ -50,9 +50,16 @@ export default class WebCustomColumnDrawer extends React.Component<IWebCustomCol
     };
   }
 
-  componentWillReceiveProps(nextProps: IWebCustomColumnDrawerProps) {
+  componentDidUpdate(prevProps: IWebCustomColumnDrawerProps) {
+    // React 19 移除了 componentWillReceiveProps。
+    // 原语义：外部传入的 columns 与当前已缓存的 defaultColumns 不一致时，重置为外部值。
+    // 用 componentDidUpdate + prevProps 等价实现：只在 columns 引用/内容真的变了时才重置，
+    // 避免每次更新都 setState 造成循环。
+    if (prevProps.columns === this.props.columns) {
+      return;
+    }
     const { defaultColumns } = this.state;
-    const { columns: nextColumns } = nextProps;
+    const { columns: nextColumns } = this.props;
 
     if (!isEqual(defaultColumns, nextColumns)) {
       this.setState({
@@ -181,7 +188,7 @@ export default class WebCustomColumnDrawer extends React.Component<IWebCustomCol
     </div>;
   }
 
-  renderColumnFixed(value: any, rowIndex: string, record: any) {
+  renderColumnFixed(value: any, rowIndex: number, record: any) {
     const { dataKey } = record;
 
     return this.isHidden(dataKey) ? null : <Switch

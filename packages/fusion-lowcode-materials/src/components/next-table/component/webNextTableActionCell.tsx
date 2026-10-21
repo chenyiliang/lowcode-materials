@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import classnames from 'classnames';
 import { Button, MenuButton } from '@alifd/next';
+import type { DeviceType } from '@alifd/next/types/config-provider/types';
 import actionTitleRender from "../utils/render/actionTitleRender";
 import runColumnActionCallback from "../utils/runColumnActionCallback";
 import filterActionColumn from "../utils/filterActionColumn";
@@ -22,7 +23,8 @@ export interface IWebNextTableActionCellProps {
   maxWebShownActionCount?: number;
   nextTablePrefix?: string;
   rowData?: any;
-  device?: string;
+  // 与 TableProps.device 保持一致（DeviceType），避免继承时冲突
+  device?: DeviceType;
   index?: number;
   locale?: {
     [prop: string]: string;
@@ -86,7 +88,9 @@ export default class WebNextTableActionCell extends React.Component<IWebNextTabl
           onItemClick={(i, item) => {
             const title = item.props.title;
             const action = remainActions.find((item) => {
-              return item.title = title;
+              // 原代码是 `item.title = title`（赋值，恒返回真值 → find 永远命中第一个），
+              // 显然是笔误，应为比较。修正后按 title 匹配对应 action。
+              return item.title === title;
             });
             runColumnActionCallback({
               index,

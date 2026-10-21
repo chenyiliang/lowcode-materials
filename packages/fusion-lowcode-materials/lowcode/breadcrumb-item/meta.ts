@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   group: '原子组件',
   componentName: 'Breadcrumb.Item',
   title: '面包屑 Item',

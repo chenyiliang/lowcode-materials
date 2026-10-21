@@ -1,7 +1,7 @@
-import { ComponentMetadata, Snippet } from '@ali/lowcode-types';
+import { IPublicTypeComponentMetadata, IPublicTypeSnippet } from '@alilc/lowcode-types';
 import { default as formBaseProps } from '../pro-form/common/form-base-props';
 
-const ChildFormMeta: ComponentMetadata = {
+const ChildFormMeta: IPublicTypeComponentMetadata = {
   componentName: 'ChildForm',
   title: '子表单',
   docUrl: '',
@@ -33,7 +33,7 @@ const ChildFormMeta: ComponentMetadata = {
     },
   },
 };
-const snippets: Snippet[] = [
+const snippets: IPublicTypeSnippet[] = [
   {
     title: '子表单',
     screenshot:

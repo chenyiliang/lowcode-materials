@@ -79,4 +79,3 @@ export const ProTableColumnTitle: React.FC<ProTableColumnTitleProps> = ({
 };
 
 ProTableColumnTitle.displayName = 'ProTableColumnTitle';
-ProTableColumnTitle.defaultProps = {};

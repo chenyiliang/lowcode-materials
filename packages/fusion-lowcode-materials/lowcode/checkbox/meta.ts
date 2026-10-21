@@ -1,4 +1,5 @@
-module.exports = {
+import __req0__ from './snippets';
+export default {
   group: '原子组件',
   componentName: 'Checkbox',
   title: '复选按钮',
@@ -188,5 +189,5 @@ module.exports = {
   },
   icon: '',
   category: '信息输入',
-  snippets: require('./snippets'),
+  snippets: __req0__,
 };

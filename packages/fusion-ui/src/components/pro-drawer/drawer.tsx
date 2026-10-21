@@ -10,7 +10,8 @@ import Operations, { OperationProps } from '@/common/operations';
 const cssPrefix = `${bizCssPrefix}-pro-drawer`;
 
 const noop = () => {};
-const isValidFunction = (func: any) => typeof func === 'function';
+// 用类型谓词替代 `typeof x === 'function'`，使调用点在为真时收窄类型
+const isValidFunction = <T,>(func: T | undefined): func is T => typeof func === 'function';
 const ACTION_MAP: Record<string | number, any> = {
   ok: noop,
   cancel: noop,
@@ -19,7 +20,8 @@ const ACTION_MAP: Record<string | number, any> = {
 function getAction(action: string | number) {
   return ACTION_MAP[action] || noop;
 }
-export interface DrawerProps extends NextDrawerProps {
+// @alifd/next 的 DrawerProps 是联合类型，interface 无法 extends（TS2312），改用交叉类型。
+export type DrawerProps = NextDrawerProps & {
   /**
    * 弹窗大小
    */
@@ -30,7 +32,17 @@ export interface DrawerProps extends NextDrawerProps {
   onCancel?: any;
   footer?: any;
   titleTip?: any;
-}
+  // 以下属性 next 的 DrawerProps 联合类型里并非每个分支都声明，但运行期由本组件消费。
+  children?: React.ReactNode;
+  className?: string;
+  title?: React.ReactNode;
+  placement?: string;
+  width?: string | number;
+  height?: string | number;
+  onClose?: (trigger: string, event: object) => void;
+  /** 低代码设计态标记（isEditorEnv 读取），运行期由引擎注入 */
+  __designMode?: string;
+};
 
 export interface DrawerOperationsProps extends OperationProps {
   onOk?: any;
@@ -116,12 +128,12 @@ function Drawer(props: DrawerProps) {
   let align;
   if (size) {
     // ver
-    if (['top', 'bottom'].includes(placement)) {
+    if (['top', 'bottom'].includes(placement as string)) {
       align = 'ver';
       if (!_height) {
         _height = sizeMap[size].ver;
       }
-    } else if (['left', 'right'].includes(placement)) {
+    } else if (['left', 'right'].includes(placement as string)) {
       align = 'hoz';
       if (!_width) {
         _width = sizeMap[size].hoz;
@@ -164,8 +176,8 @@ function Drawer(props: DrawerProps) {
     <NextDrawer
       className={cssPrefix}
       placement={placement}
-      width={align === 'hoz' ? _width : null}
-      height={align === 'ver' ? _height : null}
+      width={align === 'hoz' ? _width : undefined}
+      height={align === 'ver' ? _height : undefined}
       title={titleElement}
       {...otherProps}
     >
@@ -176,10 +188,12 @@ function Drawer(props: DrawerProps) {
   );
 }
 
-export class InnerProDrawer extends React.Component<DrawerProps> {
-  static displayName: 'ProDrawer';
+interface DrawerState {
+  visible?: boolean;
+}
 
-  static propTypes: DrawerProps;
+export class InnerProDrawer extends React.Component<DrawerProps, DrawerState> {
+  static displayName: 'ProDrawer';
 
   constructor(props: DrawerProps) {
     super(props);
@@ -189,7 +203,7 @@ export class InnerProDrawer extends React.Component<DrawerProps> {
     };
   }
 
-  onOk = (event: Object) => {
+  onOk = (event: object) => {
     const { onOk } = this.props;
     if (isValidFunction(onOk)) {
       onOk(event);
@@ -200,7 +214,7 @@ export class InnerProDrawer extends React.Component<DrawerProps> {
     }
   };
 
-  onCancel = (event: Object) => {
+  onCancel = (event: object) => {
     const { onCancel } = this.props;
     if (isValidFunction(onCancel)) {
       onCancel(event);
@@ -209,7 +223,7 @@ export class InnerProDrawer extends React.Component<DrawerProps> {
     this.setState({ visible: false });
   };
 
-  onClose = (trigger: String, event: Object) => {
+  onClose = (trigger: string, event: object) => {
     const { onClose } = this.props;
     if (isValidFunction(onClose)) {
       onClose(trigger, event);

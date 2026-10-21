@@ -32,7 +32,7 @@ export const useColumnsSettingValue = (
       actionType: ProTableSettingActionType,
     ) => {
       setColumnsSetting((oldVal) => {
-        const val = is.function_(newSetting) ? newSetting(oldVal || {}) : newSetting;
+        const val = is.function(newSetting) ? newSetting(oldVal || {}) : newSetting;
 
         return Object.keys(val).reduce(
           (p, key) => ({
@@ -58,7 +58,7 @@ export const useColumnsSettingValue = (
     ) => {
       updateColumnsSetting(
         (oldVal) => ({
-          [key]: is.function_(newSetting) ? newSetting(oldVal[key] || {}) : newSetting,
+          [key]: is.function(newSetting) ? newSetting(oldVal[key] || {}) : newSetting,
         }),
         actionType,
       );

@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     title: '进度指示器',
     screenshot:

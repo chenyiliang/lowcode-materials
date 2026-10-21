@@ -1,4 +1,5 @@
-module.exports = {
+import __req0__ from './snippets';
+export default {
   group: '原子组件',
   componentName: 'TreeSelect',
   title: '树型选择控件',
@@ -358,5 +359,5 @@ module.exports = {
   },
   icon: '',
   category: '信息输入',
-  snippets: require('./snippets'),
+  snippets: __req0__,
 };

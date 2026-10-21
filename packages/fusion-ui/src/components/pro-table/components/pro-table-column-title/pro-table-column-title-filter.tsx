@@ -34,7 +34,8 @@ export const ProTableColumnTitleFilter: React.FC<ProTableColumnTitleFilterProps>
   }, [columnFilters, dataIndex]);
 
   const { tableBeforeContainer } = React.useContext(ProTableContext);
-  const triggerRef = React.useRef();
+  // React 19 要求 useRef 必须传初始值
+  const triggerRef = React.useRef<HTMLSpanElement | null>(null);
   const trigger = (
     <span style={{ lineHeight: '100%' }} role="button" tabIndex={0} ref={triggerRef}>
       <CustomIcon

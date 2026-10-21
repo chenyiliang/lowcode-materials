@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     title: '需求占位',
     screenshot: 'https://img.alicdn.com/tfs/TB160cKkP39YK4jSZPcXXXrUFXa-112-64.png',

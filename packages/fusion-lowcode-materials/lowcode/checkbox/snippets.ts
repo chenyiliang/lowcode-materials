@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     title: '复选按钮',
     screenshot:

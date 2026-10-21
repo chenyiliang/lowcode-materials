@@ -28,7 +28,9 @@ export const ProTableSettingOverlay: React.FC<OverlayProps> = (props) => {
     [updateColumnSetting],
   );
   const onLock = React.useCallback(
-    (id: string, lock: boolean | 'left' | 'right') => {
+    // 签名与 ProTableSettingSortableList 的 onLock 一致（lock 可为任意字符串，实际只用
+    // 'left' | 'right' | false）；底层 updateColumnSetting 存的也是 boolean | string。
+    (id: string, lock: boolean | string) => {
       updateColumnSetting(id, () => ({ lock }), 'input');
     },
     [updateColumnSetting],
@@ -60,9 +62,14 @@ export const ProTableSettingOverlay: React.FC<OverlayProps> = (props) => {
         .map((vo, index) => {
           const id = getColumnKey(vo, columnKey);
 
+          // next ColumnProps.title 允许是渲染函数 (() => any)，但设置面板里 title 只作
+          // 静态标签展示，ReactNode 不接受裸函数，故函数形态时回退到 group/空。
+          const rawTitle = vo.title;
+          const displayTitle =
+            typeof rawTitle === 'function' ? vo.group : rawTitle || vo.group;
           return {
             id,
-            title: vo.title || vo.group,
+            title: displayTitle,
             defaultSortRank: index,
             defaultLock: vo.lock,
             children:
@@ -75,9 +82,9 @@ export const ProTableSettingOverlay: React.FC<OverlayProps> = (props) => {
     return formatItems(columns || []);
   }, [columnKey, columns]);
   const dataSourceGroup = React.useMemo(() => {
-    const leftLock = [];
-    const rightLock = [];
-    const noLock = [];
+    const leftLock: ProTableSettingMenuItem[] = [];
+    const rightLock: ProTableSettingMenuItem[] = [];
+    const noLock: ProTableSettingMenuItem[] = [];
     dataSource.forEach((vo) => {
       const settingLock = columnsSetting[vo.id]?.lock;
       const lock = is.undefined(settingLock) ? vo.defaultLock : settingLock;

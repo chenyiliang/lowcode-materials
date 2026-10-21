@@ -12,7 +12,13 @@ interface LinkProps {
  * @param props
  */
 const Link: React.ForwardRefRenderFunction<HTMLAnchorElement, LinkProps> = (props, ref) => {
-  const { children, __designMode, ...others } = props;
+  const {
+    children = '这是一个超链接',
+    __designMode,
+    href = 'https://fusion.design',
+    target = '_blank',
+    ...others
+  } = props;
   const otherProps: any = {};
   if (__designMode === 'design') {
     otherProps.onClick = (e: Event) => {
@@ -20,18 +26,12 @@ const Link: React.ForwardRefRenderFunction<HTMLAnchorElement, LinkProps> = (prop
     };
   }
   return (
-    <a {...others} ref={ref} {...otherProps}>
+    <a {...others} href={href} target={target} ref={ref} {...otherProps}>
       {children}
     </a>
   );
 };
 
 const RefLink = React.forwardRef(Link);
-
-RefLink.defaultProps = {
-  href: 'https://fusion.design',
-  children: '这是一个超链接',
-  target: '_blank',
-};
 
 export default RefLink;

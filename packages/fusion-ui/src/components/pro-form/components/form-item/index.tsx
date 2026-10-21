@@ -121,7 +121,6 @@ const ProFormItem: React.ForwardRefRenderFunction<any, ProFormItemProps> = (
 
 const RefProFormItem = React.forwardRef(ProFormItem);
 RefProFormItem.displayName = 'ProFormItem';
-RefProFormItem.defaultProps = {};
-RefProFormItem.propTypes = {};
+// React 19 移除了函数组件的 defaultProps / propTypes（这里原本是空对象，直接删除）
 
 export default RefProFormItem;

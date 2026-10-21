@@ -111,13 +111,13 @@ const Icon = (props: any) => {
 };
 
 interface AntdIconSetterProps {
-  value: string;
-  type: string;
-  defaultValue: string;
-  placeholder: string;
-  hasClear: boolean;
-  onChange: (icon: string | object) => undefined;
-  icons: string[];
+  value?: string;
+  type?: string;
+  defaultValue?: string;
+  placeholder?: string;
+  hasClear?: boolean;
+  onChange?: (icon: string | object) => undefined;
+  icons?: string[];
 }
 
 const Tooltip = Balloon.Tooltip;
@@ -130,7 +130,15 @@ const AntdIconSetter = (props: AntdIconSetterProps) => {
   const [firstLoad, setFirstLoad] = useState(true);
   const [list, setList] = useState<any[]>([]);
 
-  const { value, defaultValue, type, onChange, placeholder, hasClear } = props;
+  // React 19 移除了函数组件的 defaultProps，改为默认参数值。
+  const {
+    value,
+    defaultValue = '',
+    type = 'string',
+    onChange = () => undefined,
+    placeholder = '请点击选择 Icon',
+    hasClear = false,
+  } = props;
 
   const _value =
     typeof value === 'object' ? (value as any)?.props?.type : value;
@@ -150,6 +158,12 @@ const AntdIconSetter = (props: AntdIconSetterProps) => {
         },
       });
     }
+  };
+
+  // @alifd/next Input 的 onChange 会传 (value: string | number, e, reason)，
+  // 这里只取 value 并转成 string 交给 handleChange，避免类型不匹配。
+  const handleInputChange = (value: string | number) => {
+    handleChange(String(value));
   };
 
   useEffect(() => {
@@ -205,7 +219,7 @@ const AntdIconSetter = (props: AntdIconSetterProps) => {
       <Input
         placeholder={placeholder}
         addonTextBefore={currentIcon}
-        onChange={handleChange}
+        onChange={handleInputChange}
         value={_value}
         defaultValue={defaultValue}
         readOnly
@@ -264,15 +278,6 @@ const AntdIconSetter = (props: AntdIconSetterProps) => {
       </Balloon>
     </div>
   );
-};
-
-AntdIconSetter.defaultProps = {
-  value: undefined,
-  type: 'string',
-  defaultValue: '',
-  hasClear: false,
-  placeholder: '请点击选择 Icon',
-  onChange: () => undefined,
 };
 
 // 因为下面这个问题，setter必须使用class组件

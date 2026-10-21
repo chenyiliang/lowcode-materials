@@ -36,7 +36,8 @@ class NextTable extends React.Component<ITableProps> {
         indicator={<img src="https://g.alicdn.com/uxcore/pic/loading.svg" width="45" alt="" />} {...props} />;
     },
   };
-  tableRef: React.RefObject<WebTable>;
+  // React 19: createRef() 返回 RefObject<T | null>，字段声明需匹配
+  tableRef: React.RefObject<WebTable | null>;
 
   constructor(props: ITableProps) {
     super(props);

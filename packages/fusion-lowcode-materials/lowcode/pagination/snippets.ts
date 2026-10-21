@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     title: '翻页器',
     screenshot:

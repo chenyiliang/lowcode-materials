@@ -1,14 +1,20 @@
 import { IWebTableProps } from "../table/webTable";
 import { TableProps } from '@alifd/next/types/table';
+import type { ReactNode } from 'react';
 
 export default function buildTableProps(props: IWebTableProps) {
   const {
-    loading, dataSource, onSort, emptyContent, onFilter, cellProps, rowProps,
+    loading, dataSource, onSort, emptyContent: rawEmptyContent, onFilter, cellProps, rowProps,
     primaryKey, theme, hasHeader, fixedHeader, maxBodyHeight, stickyHeader, isTree, indent,
     onRowClick, onRowMouseEnter, onRowMouseLeave, onResizeChange, width, height, loadingComponent,
     hasExpandedRowCtrl, expandedRowRender, onRowOpen, expandedRowIndent, useVirtual,offsetTop, sort, sortIcons,
     showRowSelector, onSelect, onSelectAll, isRowSelectorDisabled, rowSelector, size, expandedIndexSimulate, rowSelection,
   } = props;
+
+  // IWebTableProps.emptyContent 允许 (() => ReactNode) | ReactNode，
+  // 而 TableProps.emptyContent 只接受 ReactNode，这里统一求值（与 renderEmptyContent 一致）。
+  const emptyContent: ReactNode =
+    typeof rawEmptyContent === 'function' ? rawEmptyContent() : rawEmptyContent;
 
   let tableProps: TableProps = {
     size,

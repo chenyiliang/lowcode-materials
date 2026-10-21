@@ -1,27 +1,15 @@
 {
-  "compileOnSave": false,
-  "buildOnSave": false,
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "outDir": "build",
-    "module": "esnext",
-    "target": "es6",
-    "jsx": "react",
-    "moduleResolution": "node",
-    "lib": ["es6", "dom"],
-    "sourceMap": true,
-    "allowJs": true,
-    "noUnusedLocals": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": true,
-    "skipLibCheck": true,
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "baseUrl": "./"
+    }
   },
-  "include": ["src/*.ts", "src/*.tsx", "src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules", "build", "public"]
+  // 与参考实现/兄弟仓库一致：只 typecheck src（发布产物）。
+  // lowcode/ 是物料 schema 数据，由 build:lowcode（Vite）打包，不走 tsc。
+  "include": ["src", "../../typings.d.ts"],
+  "exclude": ["node_modules", "dist", "lowcode", "docs", "build"]
 }

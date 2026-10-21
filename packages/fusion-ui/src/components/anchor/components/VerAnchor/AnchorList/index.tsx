@@ -5,7 +5,7 @@ import { LinkItemData } from '../../../index';
 interface AnchorListProps {
   value: string;
   dataSource: LinkItemData[];
-  onSelect: (htmlId) => void;
+  onSelect: (htmlId: string) => void;
 }
 
 interface AnchorTocState {
@@ -19,7 +19,11 @@ interface AnchorTocState {
  * @param props 组件属性
  * @param level 锚点嵌套等级
  */
-const renderMenu = (menuList, props, level: number) => {
+const renderMenu = (
+  menuList: AnchorLinkProps[],
+  props: AnchorListProps,
+  level: number,
+) => {
   const { onSelect, dataSource, value } = props;
   dataSource.forEach((item) => {
     const isFocus = value === item.htmlId;
@@ -44,17 +48,17 @@ export class AnchorList extends React.Component<AnchorListProps, AnchorTocState>
     dataSource: [],
   };
 
-  static getDerivedStateFromProps = (nextProps) => {
-    const menuList = [];
+  static getDerivedStateFromProps = (nextProps: AnchorListProps) => {
+    const menuList: AnchorLinkProps[] = [];
     renderMenu(menuList, nextProps, 1);
     return {
       menuList,
     };
   };
 
-  constructor(props) {
+  constructor(props: AnchorListProps) {
     super(props);
-    const initialMenuList = [];
+    const initialMenuList: AnchorLinkProps[] = [];
     renderMenu(initialMenuList, props, 1);
     this.state = {
       menuList: initialMenuList,

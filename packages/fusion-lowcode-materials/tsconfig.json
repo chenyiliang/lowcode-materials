@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  // 与参考实现/兄弟仓库一致：只 typecheck src（发布产物）。
+  // lowcode/ 是物料 schema 数据，由 build:lowcode（Vite）打包，不走 tsc。
+  "include": ["src", "../../typings.d.ts"],
+  "exclude": ["node_modules", "dist", "lowcode"]
+}

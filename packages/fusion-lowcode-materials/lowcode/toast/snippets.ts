@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     title: '面包片',
     screenshot:

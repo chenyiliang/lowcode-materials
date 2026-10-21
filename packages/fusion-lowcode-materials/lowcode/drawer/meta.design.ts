@@ -1,4 +1,5 @@
-module.exports = {
+import __req0__ from './snippets.design';
+export default {
   group: '原子组件',
   componentName: 'Drawer',
   title: '抽屉',
@@ -454,5 +455,5 @@ module.exports = {
   },
   icon: '',
   category: '信息反馈',
-  snippets: require('./snippets.design'),
+  snippets: __req0__,
 };

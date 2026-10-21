@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     title: '日期选择框',
     screenshot:

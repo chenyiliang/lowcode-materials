@@ -1,4 +1,5 @@
-module.exports = {
+import __req0__ from './snippets';
+export default {
   componentName: 'Image',
   title: '图片',
   npm: {
@@ -57,5 +58,5 @@ module.exports = {
   icon: 'https://img.alicdn.com/imgextra/i3/O1CN01tnhXhk1GUIFhsXwzA_!!6000000000625-55-tps-56-56.svg',
   category: '基础元素',
   group: '精选组件',
-  snippets: require('./snippets'),
+  snippets: __req0__,
 };

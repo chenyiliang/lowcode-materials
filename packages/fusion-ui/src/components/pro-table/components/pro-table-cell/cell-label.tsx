@@ -12,7 +12,7 @@ export interface CellLabelProps extends React.HTMLProps<HTMLDivElement> {
   // color?: ColorType;
 }
 export const CellLabel: React.FC<CellLabelProps> = ({
-  toolTipMode,
+  toolTipMode = 'none',
   color,
   children,
   className,
@@ -36,13 +36,12 @@ export const CellLabel: React.FC<CellLabelProps> = ({
     </div>
   );
 };
-CellLabel.defaultProps = {
-  toolTipMode: 'none',
-};
 
 export interface CellToolTipProps {
   toolTipMode?: 'always' | 'ellipsis' | 'none';
   onClick?: () => void;
+  // @types/react 19 起 React.FC 不再隐式包含 children，需显式声明
+  children?: React.ReactNode;
 }
 const CellToolTip: React.FC<CellToolTipProps> = ({ toolTipMode, children }) => {
   // if (toolTipMode === 'ellipsis') {
@@ -50,7 +49,9 @@ const CellToolTip: React.FC<CellToolTipProps> = ({ toolTipMode, children }) => {
   // }
   if (toolTipMode === 'always') {
     return (
-      <Tooltip trigger={children}>
+      // Tooltip 的 trigger 只接受 ReactElement/string，children 是更宽的 ReactNode，
+      // 用 Fragment 包一层（Fragment 本身是 ReactElement），渲染结果不变。
+      <Tooltip trigger={<>{children}</>}>
         <>{children}</>
       </Tooltip>
     );

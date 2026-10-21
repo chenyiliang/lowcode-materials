@@ -1,4 +1,5 @@
-module.exports = {
+import __req0__ from './snippets';
+export default {
   group: '原子组件',
   componentName: 'Card',
   title: '卡片',
@@ -103,5 +104,5 @@ module.exports = {
   },
   icon: 'https://alifd.oss-cn-hangzhou.aliyuncs.com/fusion-cool/icons/icon-light/ic_light_card.png',
   category: '信息输入',
-  snippets: require('./snippets'),
+  snippets: __req0__,
 };

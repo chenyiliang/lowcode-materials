@@ -1,8 +1,0 @@
-{
-  "sourceMap": false,
-  "alias": {
-    "@": "./src",
-    "@components": "./src/components"
-  },
-  "plugins": [["build-plugin-component"]]
-}

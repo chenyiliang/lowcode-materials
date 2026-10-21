@@ -1,6 +1,6 @@
-import { ComponentMetadata, Snippet } from '@alilc/lowcode-types';
+import { IPublicTypeComponentMetadata, IPublicTypeSnippet } from '@alilc/lowcode-types';
 
-const StartEndMeta: ComponentMetadata = {
+const StartEndMeta: IPublicTypeComponentMetadata = {
   componentName: 'StartEnd',
   title: '起止节点',
   docUrl: '',
@@ -43,7 +43,7 @@ const StartEndMeta: ComponentMetadata = {
   category: '事件节点',
   priority: 2
 };
-const snippets: Snippet[] = [
+const snippets: IPublicTypeSnippet[] = [
   {
     title: '起止节点',
     screenshot: 'https://img.alicdn.com/imgextra/i4/O1CN01sZwPKb1f1JgS9ayrg_!!6000000003946-55-tps-16-16.svg',

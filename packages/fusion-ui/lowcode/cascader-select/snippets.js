@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     title: '收起模式',
     screenshot:

@@ -173,7 +173,7 @@ const AnchorFormMeta: IComponentDescription = {
     ],
   },
 };
-const snippets: Snippet[] = [
+const snippets: IPublicTypeSnippet[] = [
   {
     title: '电梯表单',
     screenshot:

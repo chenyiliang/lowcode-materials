@@ -37,6 +37,9 @@ export interface ButtonGroupProps extends SpaceProps {
   i18nBundle?: any;
 }
 
+/** dataSource 里的每一项：要么是 React 元素，要么是 Button 的 props 对象 */
+type ButtonDataSourceItem = React.ReactElement | Partial<ButtonProps>;
+
 export class ButtonGroup extends React.Component<ButtonGroupProps> {
   static defaultProps = {
     visibleButtonCount: 3,
@@ -59,7 +62,7 @@ export class ButtonGroup extends React.Component<ButtonGroupProps> {
       };
     }
 
-    const realDataSource: object[] = [];
+    const realDataSource: ButtonDataSourceItem[] = [];
 
     if (children) {
       React.Children.forEach(children, (child) => {
@@ -98,8 +101,8 @@ export class ButtonGroup extends React.Component<ButtonGroupProps> {
   /**
    * 获取可展示的 dataSource & 折叠的 dataSource
    */
-  getVisibleDataSourceAndCollapseDataSource = (dataSource) => {
-    const { visibleButtonCount } = this.props;
+  getVisibleDataSourceAndCollapseDataSource = (dataSource: ButtonDataSourceItem[]) => {
+    const { visibleButtonCount = 3 } = this.props;
     if (visibleButtonCount === false) {
       return {
         visible: dataSource,
@@ -107,8 +110,8 @@ export class ButtonGroup extends React.Component<ButtonGroupProps> {
       };
     }
 
-    const visibleDataSource = [];
-    const collapseDataSource = [];
+    const visibleDataSource: ButtonDataSourceItem[] = [];
+    const collapseDataSource: ButtonDataSourceItem[] = [];
 
     dataSource.forEach((dataSourceItem, idx) => {
       if (idx >= visibleButtonCount) {
@@ -127,13 +130,13 @@ export class ButtonGroup extends React.Component<ButtonGroupProps> {
   /**
    * 渲染可展示的 dataSource
    */
-  renderVisible(dataSource) {
-    const buttonList = [];
+  renderVisible(dataSource: ButtonDataSourceItem[]) {
+    const buttonList: React.ReactNode[] = [];
     dataSource.forEach((dataSourceItem, idx) => {
       if (React.isValidElement(dataSourceItem)) {
         buttonList.push(dataSourceItem);
       } else {
-        buttonList.push(<Button key={idx} {...dataSourceItem} />);
+        buttonList.push(<Button key={idx} {...(dataSourceItem as ButtonProps)} />);
       }
     });
 
@@ -143,14 +146,18 @@ export class ButtonGroup extends React.Component<ButtonGroupProps> {
   /**
    * 渲染折叠的 dataSource
    */
-  renderCollapse(dataSource) {
+  renderCollapse(dataSource: ButtonDataSourceItem[]) {
     const { i18nBundle, moreMenuButtonProps, text } = this.props;
 
     const menuDataSource = dataSource.map((dataSourceItem) => {
-      if (typeof dataSourceItem.props === 'object') {
-        return omit(dataSourceItem.props, ['type', 'text']);
+      // dataSourceItem 可能是 React 元素（取其 props）或普通 props 对象
+      const rawProps = React.isValidElement(dataSourceItem)
+        ? (dataSourceItem.props as Record<string, unknown>)
+        : (dataSourceItem as Record<string, unknown>);
+      if (typeof rawProps === 'object' && rawProps !== null) {
+        return omit(rawProps, ['type', 'text']);
       }
-      return omit(dataSourceItem, ['type', 'text']);
+      return omit(rawProps, ['type', 'text']);
     });
     if (dataSource.length > 0) {
       return (

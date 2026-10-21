@@ -86,16 +86,16 @@ export const Card: React.FC<CardProps> = (props) => {
     className,
     actionBar,
     actionButtons,
-    loading,
+    loading = false,
     tagGroup,
     style,
-    hasCollapse,
-    isDialogCard,
+    hasCollapse = false,
+    isDialogCard = false,
     explanation,
     explanationTooltipProps,
     children,
-    segmentLine,
-    defaultCollapse,
+    segmentLine = false,
+    defaultCollapse = false,
     setCollapse,
     isCollapse,
     hasDivider,
@@ -181,14 +181,6 @@ export const Card: React.FC<CardProps> = (props) => {
       )}
     </div>
   );
-};
-
-Card.defaultProps = {
-  segmentLine: false,
-  loading: false,
-  isDialogCard: false,
-  hasCollapse: false,
-  defaultCollapse: false,
 };
 
 Card.displayName = 'Card';

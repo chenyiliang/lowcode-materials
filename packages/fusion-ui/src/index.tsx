@@ -1,4 +1,7 @@
-import { version } from '../package';
+import { version } from '../package.json';
+// 老 build-plugin-fusion 会自动收集各组件 scss；Vite 库模式需显式 import 聚合样式入口，
+// 否则 dist 不会产出 css。index.scss 里 @import 了全部组件样式。
+import './index.scss';
 
 // export { default as ProCard } from './components/pro-card';
 // export type { CardProps, CardSectionProps } from './components/pro-card';

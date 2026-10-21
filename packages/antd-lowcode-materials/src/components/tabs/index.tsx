@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
-import { TabPaneProps, Tabs as OriginalTabs } from 'antd';
+import { Tabs as OriginalTabs } from 'antd';
+import type { TabPaneProps, TabsProps } from 'antd';
 import { warning } from '../../utils/warning'
-import type { Tab } from 'rc-tabs/lib/interface';
+
+// antd 6 内部改用 @rc-component/tabs，`Tab` 类型不再从 antd 顶层导出。
+// 这里直接从 TabsProps 的 items 元素类型推导，避免依赖 antd 的传递依赖内部路径。
+type TabItem = NonNullable<TabsProps['items']>[number];
 
 class Tabs extends Component<any> {
   state = {
@@ -40,7 +44,7 @@ class Tabs extends Component<any> {
         if (React.isValidElement(node)) {
           const { key, props } = node;
           const { tab, ...restProps } = props || {};
-          const item: Tab = {
+          const item: TabItem = {
             key: String(key),
             ...restProps,
             label: tab,

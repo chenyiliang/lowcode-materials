@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     title: '侧抽屉',
     screenshot: 'https://img.alicdn.com/tfs/TB1o0t4u9f2gK0jSZFPXXXsopXa-112-64.png',

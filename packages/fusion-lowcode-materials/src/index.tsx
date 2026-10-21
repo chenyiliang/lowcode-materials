@@ -9,6 +9,10 @@ import NoteWrapper from './components/note-wrapper';
 import NextTable from './components/next-table';
 import Div from './components/div';
 
+// 老 build-plugin-fusion 会自动注入样式；Vite 库模式需显式 import。
+// index.scss 聚合了 note-wrapper / next-text 的样式（next-table 自带 import）。
+import './index.scss';
+
 export {
   Affix,
   Animate,

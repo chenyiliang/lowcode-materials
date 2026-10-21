@@ -1,4 +1,4 @@
-import { ComponentMetadata, Snippet } from '@ali/lowcode-types';
+import { IPublicTypeComponentMetadata, IPublicTypeSnippet } from '@alilc/lowcode-types';
 import { formItemsProps } from '../pro-form/common/form-base-props';
 import { showWithLabelAlign } from '../utils';
 import { operations } from '../common';
@@ -35,7 +35,7 @@ const operationConfig = {
   },
 };
 
-const FilterMeta: ComponentMetadata = {
+const FilterMeta: IPublicTypeComponentMetadata = {
   componentName: 'Filter',
   title: '查询筛选',
   group: '精选组件',
@@ -269,7 +269,7 @@ const FilterMeta: ComponentMetadata = {
     },
   },
 };
-const snippets: Snippet[] = [
+const snippets: IPublicTypeSnippet[] = [
   {
     title: '查询筛选',
     screenshot:

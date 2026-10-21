@@ -2,7 +2,8 @@ import type { IWebTableProps } from "../table/webTable";
 import filterActionColumnByDevice from "./filterActionColumnByDevice";
 
 export default function filterActionColumn(actionColumn: IWebTableProps['actionColumn'], rowData: any, device: IWebTableProps['device']) {
-  const filterByEditable = actionColumn.filter((action) => {
+  // actionColumn 是可选的，缺省时按空数组处理
+  const filterByEditable = (actionColumn ?? []).filter((action) => {
     if (action.render && typeof action.render === 'function' && !action.render(action.title, rowData)) {
       return false
     }

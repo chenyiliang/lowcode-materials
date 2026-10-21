@@ -36,7 +36,7 @@ export interface GridProps {
   /**
    * 响应式导致列发生改变的时候的回调
    */
-  onColumnChange?: (column) => void;
+  onColumnChange?: (column: number) => void;
   /**
    * 容器的样式
    */
@@ -45,30 +45,36 @@ export interface GridProps {
    * 子元素的样式控制
    */
   gridItemStyle?: React.CSSProperties;
+  /**
+   * 子元素。@types/react 19 起 React.FC 不再隐式包含 children，需显式声明。
+   */
+  children?: React.ReactNode;
 }
 
 const DEFAULT_COLS = 4;
 const Grid: React.FC<GridProps> = ({
   style,
   gridItemStyle,
-  columnGap,
-  rowGap,
+  // React 19 移除了函数组件的 defaultProps，改为解构默认值
+  columnGap = 20,
+  rowGap = 20,
   splot,
   cols: propsCols,
   area,
   className,
   children,
-  responsive: propResponsive,
-  onColumnChange,
+  responsive: propResponsive = false,
+  onColumnChange = () => {},
 }) => {
   const responsive = !propsCols ? true : propResponsive;
   const [cols, setCols] = useState(propsCols);
-  const gridRef = useRef();
+  // React 19 要求 useRef 必须传初始值
+  const gridRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
-    if (responsive) {
+    if (responsive && gridRef.current) {
       new ResizeObserver((enties) => {
         for (const oGrid of enties) {
-          const width = oGrid.target.clientWidth;
+          const width = (oGrid.target as HTMLElement).clientWidth;
           let targetCols = DEFAULT_COLS;
 
           if (width <= 602) {
@@ -103,34 +109,39 @@ const Grid: React.FC<GridProps> = ({
       className={cn('fusion-ui-grid', className, responsive && 'responsive')}
     >
       {React.Children.map(
-        compact(React.Children.toArray(children)),
-        (item: React.ReactElement, index) => {
-          const { colSpan, rowSpan, hidden } = item.props;
-          const areaIndexData = [].concat(area?.[index]);
+        // compact(Children.toArray(...)) 的元素类型被 lodash 推断为 unknown，
+        // 这里只保留 React 元素并按 Grid 子项支持的 props 收窄。
+        compact(React.Children.toArray(children) as React.ReactElement[]),
+        (item, index) => {
+          if (!React.isValidElement(item)) return item;
+          const itemProps = item.props as {
+            colSpan?: number | 'full';
+            rowSpan?: number;
+            hidden?: boolean;
+            style?: React.CSSProperties;
+          };
+          const { colSpan, rowSpan, hidden } = itemProps;
+          const areaIndex = area?.[index];
+          const areaIndexData = ([] as number[]).concat(
+            (areaIndex === undefined ? [] : areaIndex) as number | number[],
+          );
           const gridItemRow = rowSpan || areaIndexData?.[1] || 1;
           const gridItemColumn = colSpan || areaIndexData?.[0] || 1;
 
           return cloneElement(item, {
             style: {
-              ...(item.props.style || {}),
+              ...(itemProps.style || {}),
               ...gridItemStyle,
-              display: hidden ? 'none' : item.props.style?.display || null,
+              display: hidden ? 'none' : itemProps.style?.display || null,
               gridRow: `span ${gridItemRow}`,
               gridColumn: `span ${gridItemColumn === 'full' ? cols : gridItemColumn}`,
             },
-          });
+          } as Partial<unknown>);
         },
       )}
       {splot}
     </div>
   );
-};
-
-Grid.defaultProps = {
-  columnGap: 20,
-  rowGap: 20,
-  responsive: false,
-  onColumnChange: () => {},
 };
 
 Grid.displayName = 'Grid';

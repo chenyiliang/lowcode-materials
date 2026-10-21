@@ -1,7 +1,7 @@
 import { Calendar as OriginalCalendar } from 'antd';
-import { withMomentProps } from '../../utils/hoc';
+import { withDayjsProps } from '../../utils/hoc';
 
-const Calendar = withMomentProps(OriginalCalendar, [
+const Calendar = withDayjsProps(OriginalCalendar, [
   'defaultValue',
   'validRange',
   'value.defaultValue',

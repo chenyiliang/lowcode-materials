@@ -1,4 +1,5 @@
 import * as moment from 'moment';
+import __req0__ from './snippets';
 
 moment?.locale?.('zh-cn');
 
@@ -156,5 +157,5 @@ export default {
   },
   icon: 'https://img.alicdn.com/imgextra/i3/O1CN01IAguy71sM0UGdpChd_!!6000000005751-55-tps-56-56.svg',
   category: '信息展示',
-  snippets: require('./snippets'),
+  snippets: __req0__,
 };

@@ -1,12 +1,21 @@
 import React, { CSSProperties, forwardRef } from 'react';
+import type { ReactNode } from 'react';
 
-const Div = forwardRef<HTMLDivElement, {className?: string; style: CSSProperties }>((props, ref) => {
+interface DivProps {
+  className?: string;
+  style?: CSSProperties;
+  // @types/react 19 起 React.FC / 函数组件不再隐式包含 children，需显式声明
+  children?: ReactNode;
+}
+
+const Div = forwardRef<HTMLDivElement, DivProps>((props, ref) => {
+  const { className, style, children } = props;
   return (
-    <div className={props.className} style={props.style} ref={ref}>
-      {props.children}
+    <div className={className} style={style} ref={ref}>
+      {children}
     </div>
-  )
-})
+  );
+});
 
 Div.displayName = 'Div';
 

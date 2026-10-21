@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     title: '级联选择器',
     screenshot:

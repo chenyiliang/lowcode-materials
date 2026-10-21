@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   componentName: 'Slot',
   npm: {
     package: '@alilc/lowcode-materials',

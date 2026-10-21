@@ -1,3 +1,4 @@
+import __req0__ from './snippets';
 const updateChildren = (target, value) => {
   const { node } = target;
   const map = {};
@@ -49,7 +50,7 @@ const updateChildren = (target, value) => {
   );
 };
 
-module.exports = {
+export default {
   group: '原子组件',
   componentName: 'Timeline',
   title: '时间轴',
@@ -258,5 +259,5 @@ module.exports = {
   },
   icon: '',
   category: '信息展示',
-  snippets: require('./snippets'),
+  snippets: __req0__,
 };

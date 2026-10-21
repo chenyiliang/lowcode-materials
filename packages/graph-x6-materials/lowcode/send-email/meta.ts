@@ -1,6 +1,6 @@
-import { ComponentMetadata, Snippet } from '@alilc/lowcode-engine';
+import { IPublicTypeComponentMetadata, IPublicTypeSnippet } from '@alilc/lowcode-types';
 
-const SendEmailMeta: ComponentMetadata = {
+const SendEmailMeta: IPublicTypeComponentMetadata = {
   componentName: 'SendEmail',
   title: '发送邮件',
   docUrl: '',
@@ -43,7 +43,7 @@ const SendEmailMeta: ComponentMetadata = {
   category: '事件节点',
   priority: 1
 };
-const snippets: Snippet[] = [
+const snippets: IPublicTypeSnippet[] = [
   {
     title: '发送邮件',
     screenshot: '',

@@ -25,7 +25,7 @@ export const getColorWithFormat = (value?: unknown, formatColor?: FormatColor): 
   if (is.object(formatColor)) {
     return formatColor[value as string];
   }
-  if (is.function_(formatColor)) {
+  if (is.function(formatColor)) {
     return formatColor(value);
   }
   if (is.string(formatColor)) {

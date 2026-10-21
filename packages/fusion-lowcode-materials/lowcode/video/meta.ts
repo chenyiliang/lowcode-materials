@@ -1,4 +1,5 @@
-module.exports = {
+import __req0__ from './snippets';
+export default {
   group: '原子组件',
   componentName: 'Video',
   title: '视频',
@@ -124,5 +125,5 @@ module.exports = {
   },
   icon: 'https://img.alicdn.com/imgextra/i4/O1CN01Rc4H6E1KHhpdjKn0n_!!6000000001139-55-tps-56-56.svg',
   category: '信息展示',
-  snippets: require('./snippets'),
+  snippets: __req0__,
 };

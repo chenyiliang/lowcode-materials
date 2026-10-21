@@ -2,7 +2,7 @@ import * as React from 'react';
 import cx from 'classnames';
 import { CustomIcon } from '@/components/toggle-icon';
 import { AnchorProps } from '../../index';
-import { startListen, removeListen, jumpToNode } from '../../util';
+import { startListen, removeListen, jumpToNode, AnchorContainer } from '../../util';
 import { AnchorList } from './AnchorList';
 
 export class VerAnchor extends React.Component<Omit<AnchorProps, 'direction'>> {
@@ -15,14 +15,15 @@ export class VerAnchor extends React.Component<Omit<AnchorProps, 'direction'>> {
   state = {
     currentValue: '',
     visible: this.props.defaultVisible,
-    container: null,
+    container: null as AnchorContainer | null,
   };
 
   prefix = 'fusion-ui-anchor-ver';
 
   componentDidMount() {
     const { dataSource, container, offsetY } = this.props;
-    const _container = container();
+    // container 可选，运行期由 Anchor 包装后注入；返回值按 AnchorContainer 处理
+    const _container = container ? (container() as AnchorContainer) : null;
     startListen(dataSource, () => _container, this.updateCurrentValue, {
       offsetY,
     });
@@ -44,7 +45,7 @@ export class VerAnchor extends React.Component<Omit<AnchorProps, 'direction'>> {
     });
   };
 
-  updateCurrentValue = (newValue) => {
+  updateCurrentValue = (newValue: string) => {
     this.setState({
       currentValue: newValue,
     });
@@ -55,7 +56,7 @@ export class VerAnchor extends React.Component<Omit<AnchorProps, 'direction'>> {
     document.body.scrollTop = 0;
   };
 
-  onChange = (newValue) => {
+  onChange = (newValue: string) => {
     const { onChange } = this.props;
     const status = onChange && onChange(newValue);
     if (status !== false) {
@@ -72,7 +73,8 @@ export class VerAnchor extends React.Component<Omit<AnchorProps, 'direction'>> {
     const classes = cx({
       [this.prefix]: true,
       [`${this.prefix}-expand`]: visible,
-      [className]: !!className,
+      // className 可能为 undefined，计算属性名不能是 undefined，故仅在存在时加入
+      ...(className ? { [className]: true } : {}),
     });
 
     return (

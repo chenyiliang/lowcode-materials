@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Divider, Box } from '@alifd/next';
 import { BoxProps } from '@alifd/next/types/box';
 
@@ -22,15 +21,13 @@ const directionMap = {
 };
 class Space extends React.Component<SpaceProps> {
   static displayName = 'Space';
-  static propTypes = {
-    ...Box.propTypes,
-    split: PropTypes.bool,
-    direction: PropTypes.oneOf(['hoz', 'ver', 'hoz-reverse']),
-  };
+  // React 19 移除了 propTypes，Space 的属性类型由 SpaceProps 描述。
+  // defaultProps 对类组件在 React 19 仍生效，保留。
+  // Box 的 defaultProps 在 .d.ts 里未声明（运行期可能存在），这里按可选读取后展开。
   static defaultProps = {
-    ...Box.defaultProps,
+    ...((Box as { defaultProps?: Partial<BoxProps> }).defaultProps ?? {}),
     spacing: 8,
-    direction: 'hoz',
+    direction: 'hoz' as Direction,
     split: false,
   };
   /**
@@ -40,7 +37,7 @@ class Space extends React.Component<SpaceProps> {
    * @returns React.Children
    */
   insertDividerIntoChildren = (children: React.ReactNode, direction: Direction) => {
-    const withDividerChildren = [];
+    const withDividerChildren: React.ReactNode[] = [];
     const originalChildren = React.Children.toArray(children);
     originalChildren.forEach((item, index) => {
       withDividerChildren.push(item);
@@ -58,7 +55,7 @@ class Space extends React.Component<SpaceProps> {
     return withDividerChildren;
   };
   render() {
-    const { split, direction, align, children, ...others } = this.props;
+    const { split, direction = 'hoz', align, children, ...others } = this.props;
     return (
       <Box
         data-name="Space"

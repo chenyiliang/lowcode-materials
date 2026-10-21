@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   group: '原子组件',
   componentName: 'Tab.TabPane',
   title: 'Tab.TabPane',

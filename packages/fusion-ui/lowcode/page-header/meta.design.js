@@ -1,6 +1,7 @@
-const props = require('./common/props');
+import __req0__ from './common/props';
+const props = __req0__;
 
-module.exports = {
+export default {
   componentName: 'PageHeader',
   title: '设计态 PageHeader',
   docUrl: '',

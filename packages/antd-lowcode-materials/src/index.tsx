@@ -26,7 +26,8 @@ export { Carousel } from 'antd';
 
 export { Col } from 'antd';
 
-export { Comment } from 'antd';
+// antd 5/6 已从核心包移除 Comment，用本地复刻版（antd 6 基础元素）保持物料可用
+export { default as Comment } from './components/comment';
 
 export { Descriptions } from 'antd';
 
@@ -58,7 +59,8 @@ export { Statistic } from 'antd';
 
 export { notification } from 'antd';
 
-export { PageHeader } from 'antd';
+// antd 5/6 已从核心包移除 PageHeader，用本地复刻版（antd 6 基础元素）保持物料可用
+export { default as PageHeader } from './components/page-header';
 
 export { Pagination } from 'antd';
 

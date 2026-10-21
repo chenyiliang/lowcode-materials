@@ -2,38 +2,38 @@
   "name": "@alilc/antd-lowcode-materials",
   "version": "1.2.2",
   "description": "Antd for LowCode",
-  "main": "lib/index.js",
-  "scripts": {
-    "build": "build-scripts build",
-    "lowcode:dev": "build-scripts start --config ./build.lowcode.js",
-    "lowcode:build": "build-scripts build --config ./build.lowcode.js",
-    "prepublishOnly": "npm run build && npm run lowcode:build"
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./prototype": {
+      "import": "./dist/lowcode/meta.mjs",
+      "require": "./dist/lowcode/meta.cjs"
+    },
+    "./prototypeView": {
+      "import": "./dist/lowcode/view.mjs",
+      "require": "./dist/lowcode/view.cjs"
+    },
+    "./package.json": "./package.json",
+    "./*": "./*"
   },
   "files": [
-    "es/",
-    "lib/",
-    "dist/",
-    "build/",
-    "lowcode/",
-    "lowcode_lib/",
-    "lowcode_es/"
+    "dist",
+    "lowcode",
+    "src"
   ],
-  "devDependencies": {
-    "@alib/build-scripts": "^0.1.23",
-    "@alifd/build-plugin-lowcode": "^0.4.0",
-    "@ant-design/icons": "^4.7.0",
-    "@types/lodash": "^4.14.181",
-    "@types/react": "^18.0.1",
-    "@types/react-dom": "^18.0.0",
-    "build-plugin-component": "^1.10.0",
-    "build-plugin-moment-locales": "^0.1.0",
-    "lodash": "^4.17.21",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "style-loader": "^2.0.0",
-    "tsconfig-paths-webpack-plugin": "^3.3.0",
-    "typescript": "^3.9.3",
-    "yorkie": "^2.0.0"
+  "scripts": {
+    "clean": "node -e \"fs.rmSync('dist',{recursive:true,force:true});fs.rmSync('lowcode/.entry',{recursive:true,force:true})\"",
+    "build": "pnpm run clean && vite build && pnpm run build:lowcode",
+    "build:lowcode": "node ../../scripts/build-lowcode.mjs .",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm run build"
   },
   "authors": [
     {
@@ -43,38 +43,40 @@
       "name": "金禅"
     }
   ],
-  "dependencies": {
-    "@ant-design/icons": "^4.6.2",
-    "antd": "^4.24.7",
-    "moment": "^2.29.1",
-    "@babel/runtime": "^7.0.0"
-  },
-  "peerDependencies": {
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0"
-  },
-  "componentConfig": {
-    "materialSchema": "https://alifd.alicdn.com/npm/@alilc/antd-lowcode-materials@1.2.2/build/lowcode/assets-prod.json"
-  },
   "license": "MIT",
-  "homepage": "https://unpkg.com/@alilc/antd-lowcode-materials@1.2.2/build/index.html",
+  "homepage": "https://unpkg.com/@alilc/antd-lowcode-materials@1.2.2/dist/lowcode/assets-prod.json",
   "repository": "https://github.com/alibaba/lowcode-materials.git",
-  "exports": {
-    "./prototype": {
-      "require": "./lowcode_lib/meta.js",
-      "import": "./lowcode_es/meta.js"
-    },
-    "./prototypeView": {
-      "require": "./lowcode_lib/view.js",
-      "import": "./lowcode_es/view.js"
-    },
-    "./*": "./*",
-    ".": {
-      "import": "./es/index.js",
-      "require": "./lib/index.js"
-    }
+  "componentConfig": {
+    "materialSchema": "https://alifd.alicdn.com/npm/@alilc/antd-lowcode-materials@1.2.2/dist/lowcode/assets-prod.json"
   },
   "lcMeta": {
     "type": "component"
+  },
+  "peerDependencies": {
+    "antd": "^6.6.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^6.3.4",
+    "classnames": "^2.5.1",
+    "dayjs": "^1.11.23",
+    "lodash": "^4.18.1",
+    "tslib": "^2.8.1"
+  },
+  "devDependencies": {
+    "@alifd/next": "^1.27.34",
+    "@alilc/lowcode-types": "workspace:*",
+    "@types/lodash": "^4.17.26",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "antd": "^6.6.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "sass": "^1.105.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "vite-plugin-dts": "^5.1.2"
   }
 }

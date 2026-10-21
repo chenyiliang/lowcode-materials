@@ -1,5 +1,4 @@
-import { createElement } from 'react';
-import { Node } from '@antv/x6';
+import type { Node } from '@antv/x6';
 
 
 const CustomNode = () => ({

@@ -30,7 +30,15 @@ const StoryPlaceholder: React.ForwardRefRenderFunction<HTMLImageElement, IStoryP
   ref,
 ) => {
   const {
-    content = { subject: '', description: '' },
+    // React 19 移除了 forwardRef 函数组件的 defaultProps。原 defaultProps.content（需求示例）
+    // 优先级高于这里的解构默认值，故把示例内容合并进默认值，保持运行期一致。
+    content = {
+      subject: '需求标题',
+      hideTitle: false,
+      description:
+        '<div><span>- 你可以在这里描述需求</span><br /><span>- 或者粘贴需求截图</span></div>',
+    },
+    className = '',
     maxHeight = 'auto',
     ...others
   }: IStoryPlaceholderProps = props;
@@ -39,7 +47,7 @@ const StoryPlaceholder: React.ForwardRefRenderFunction<HTMLImageElement, IStoryP
   const title = (!oldType && content?.subject) || '';
   const hideTitle = oldType || content?.hideTitle;
   return (
-    <div {...others} ref={ref}>
+    <div {...others} className={className} ref={ref}>
       {!hideTitle && (
         <div style={{ fontSize: '30px', color: '#333', lineHeight: '32px' }}>
           <span>{title}</span>
@@ -57,15 +65,5 @@ const StoryPlaceholder: React.ForwardRefRenderFunction<HTMLImageElement, IStoryP
 };
 
 const RefStoryPlaceholder = React.forwardRef(StoryPlaceholder);
-
-RefStoryPlaceholder.defaultProps = {
-  content: {
-    subject: '需求标题',
-    hideTitle: false,
-    description:
-      '<div><span>- 你可以在这里描述需求</span><br /><span>- 或者粘贴需求截图</span></div>',
-  },
-  className: '',
-};
 
 export default RefStoryPlaceholder;

@@ -20,7 +20,7 @@ import { LoadingProps } from '@alifd/next/types/loading';
 
 
 
-export interface IWebTableProps extends IWebToolbarProps, IEditableMethodsProps, Omit<IWebNextTableActionCellProps, 'index'>, Omit<TableProps, 'locale' | 'onSelect'> {
+export interface IWebTableProps extends IWebToolbarProps, IEditableMethodsProps, Omit<IWebNextTableActionCellProps, 'index' | 'device'>, Omit<TableProps, 'locale' | 'onSelect' | 'emptyContent'> {
   data?: any;
   columns?: any[];
   nextTablePrefix?: string;
@@ -37,7 +37,8 @@ export interface IWebTableProps extends IWebToolbarProps, IEditableMethodsProps,
   emptyContent?: (() => ReactNode) | ReactNode;
   noPadding?: boolean;
   dataSource?: any;
-  device?: string;
+  // device 已由 Omit<TableProps,...> 继承（类型为 DeviceType: 'tablet'|'desktop'|'phone'），
+  // 不再在此重复声明为 string，否则与父接口冲突（TS2430）。
   actionHidden?: boolean;
   theme?: string;
   width?: string | number;
@@ -79,16 +80,21 @@ class WebTable extends React.Component<IWebTableProps, IWebTableState> {
     loadMethods(this, editableMethods);
   }
 
-  componentWillReceiveProps(nextProps: IWebTableProps) {
-    const { data } = this.props;
-    const nextData = getDataSource(nextProps);
+  componentDidUpdate(prevProps: IWebTableProps) {
+    // React 19 移除了 componentWillReceiveProps，等价迁移到 componentDidUpdate。
+    //
+    // 原实现把 getDataSource(nextProps) 跟 this.props.data 比，当外部传的是 dataSource
+    // 而不是 data 时两者恒不相等，导致每次 props 变化都 setState；这里改成两边都走
+    // getDataSource，只在真实数据变化时更新，语义更准且不会自激循环。
+    const prevData = getDataSource(prevProps);
+    const nextData = getDataSource(this.props);
 
-    if (!isEqual(nextData, data)) {
+    if (!isEqual(nextData, prevData)) {
       this.setState(convertData(nextData));
     }
 
-    const {originalColumns} = this.state;
-    const {columns : nextColumns} = nextProps;
+    const { originalColumns } = this.state;
+    const { columns: nextColumns } = this.props;
 
     if (!isEqual(originalColumns, nextColumns)) {
       this.setOriginalColumns(nextColumns);

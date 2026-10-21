@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { Checkbox, Icon } from '@alifd/next';
 import { func, obj, KEYCODE } from '@/utils/util';
@@ -58,41 +57,49 @@ export interface SelectableItemProps {
   children?: React.ReactNode;
   _key?: string;
   root?: any;
+  /**
+   * 是否选中（受控）。原先只由 propTypes 声明，这里补进 TS 类型。
+   */
+  selected?: boolean;
+  /**
+   * 选中回调。
+   */
+  onSelect?: (selected: boolean, item: SelectableItem, e: React.SyntheticEvent) => void;
+  /**
+   * 缩进层级。
+   */
+  inlineIndent?: number;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
+  onClick?: (e: React.MouseEvent) => void;
 }
+
+// React 19 移除了 propTypes（改用 TS 类型）。但这里 propTypes 在运行期被
+// `pickOthers(Object.keys(SelectableItem.propTypes), this.props)` 用来剔除已知属性，
+// 所以用一个显式的「已知属性名」常量数组替代，行为与原先完全一致。
+const SELECTABLE_ITEM_PROP_KEYS = [
+  '_key',
+  'root',
+  'selected',
+  'onSelect',
+  'inlineIndent',
+  'disabled',
+  'helper',
+  'children',
+  'className',
+  'onKeyDown',
+  'onClick',
+  'needIndent',
+];
 
 export class SelectableItem extends React.Component<SelectableItemProps> {
   static menuChildType = 'item';
-
-  static propTypes = {
-    _key: PropTypes.string,
-    root: PropTypes.object,
-    selected: PropTypes.bool,
-    onSelect: PropTypes.func,
-    inlineIndent: PropTypes.number,
-    /**
-     * 是否禁用
-     */
-    disabled: PropTypes.bool,
-    /**
-     * 帮助文本
-     */
-    helper: PropTypes.node,
-    /**
-     * 菜单项标签内容
-     */
-    children: PropTypes.node,
-    className: PropTypes.string,
-    onKeyDown: PropTypes.func,
-    onClick: PropTypes.func,
-    needIndent: PropTypes.bool,
-  };
 
   static defaultProps = {
     disabled: false,
     needIndent: true,
   };
 
-  constructor(props) {
+  constructor(props: SelectableItemProps) {
     super(props);
 
     bindCtx(this, ['handleKeyDown', 'handleClick']);
@@ -105,7 +112,7 @@ export class SelectableItem extends React.Component<SelectableItemProps> {
     return selected || (!!selectMode && selectedKeys.indexOf(_key) > -1);
   }
 
-  handleSelect(e) {
+  handleSelect(e: React.SyntheticEvent) {
     const { _key, root, onSelect } = this.props;
     if (onSelect) {
       onSelect(!this.getSelected(), this, e);
@@ -114,7 +121,7 @@ export class SelectableItem extends React.Component<SelectableItemProps> {
     }
   }
 
-  handleKeyDown(e) {
+  handleKeyDown(e: React.KeyboardEvent) {
     if (e.keyCode === KEYCODE.SPACE && !this.props.disabled) {
       this.handleSelect(e);
     }
@@ -122,7 +129,7 @@ export class SelectableItem extends React.Component<SelectableItemProps> {
     this.props.onKeyDown && this.props.onKeyDown(e);
   }
 
-  handleClick(e) {
+  handleClick(e: React.MouseEvent) {
     this.handleSelect(e);
 
     this.props.onClick && this.props.onClick(e);
@@ -146,10 +153,10 @@ export class SelectableItem extends React.Component<SelectableItemProps> {
       checkboxProps,
     } = this.props;
     const { prefix, selectMode } = root.props;
-    const others = pickOthers(Object.keys(SelectableItem.propTypes), this.props);
+    const others = pickOthers(SELECTABLE_ITEM_PROP_KEYS, this.props);
     const selected = this.getSelected();
 
-    const newProps = {
+    const newProps: Record<string, unknown> = {
       _key,
       root,
       disabled,
@@ -157,7 +164,8 @@ export class SelectableItem extends React.Component<SelectableItemProps> {
       className: cx({
         'fusion-ui-menu-item': true,
         [`${prefix}selected`]: selected,
-        [className]: !!className,
+        // className 可能为 undefined，计算属性名不能是 undefined，故仅在存在时加入
+        ...(className ? { [className]: true } : {}),
       }),
       onKeyDown: this.handleKeyDown,
       onClick: !disabled ? this.handleClick : this.props.onClick,
@@ -165,7 +173,7 @@ export class SelectableItem extends React.Component<SelectableItemProps> {
       ...others,
     };
 
-    const textProps = {};
+    const textProps: Record<string, unknown> = {};
 
     if ('selectMode' in root.props) {
       textProps['aria-selected'] = selected;
@@ -184,7 +192,7 @@ export class SelectableItem extends React.Component<SelectableItemProps> {
       );
     }
 
-    const checkProps = {
+    const checkProps: Record<string, unknown> = {
       disabled,
       checked: selected,
       ...checkboxProps,
@@ -202,7 +210,7 @@ export class SelectableItem extends React.Component<SelectableItemProps> {
       newProps.className = cx({
         'fusion-ui-menu-item': true,
         [`${prefix}selected`]: expanded,
-        [className]: !!className,
+        ...(className ? { [className]: true } : {}),
       });
       if (!innerRightIcon) {
         innerRightIcon = (

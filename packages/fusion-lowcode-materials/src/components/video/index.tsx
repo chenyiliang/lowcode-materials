@@ -14,13 +14,11 @@ export interface Props {
  * 视频
  */
 const Video: React.ForwardRefRenderFunction<HTMLVideoElement, Props> = (props, ref) => {
-  return <video {...props} ref={ref}></video>;
+  // React 19 移除了函数组件的 defaultProps，改为默认参数值
+  const { src = 'https://fusion.alicdn.com/fusion-site-2.0/fusion.mp4', ...rest } = props;
+  return <video {...rest} src={src} ref={ref}></video>;
 };
 
 const RefVideo = React.forwardRef<HTMLVideoElement, Props>(Video);
-
-RefVideo.defaultProps = {
-  src: 'https://fusion.alicdn.com/fusion-site-2.0/fusion.mp4',
-};
 
 export default RefVideo;

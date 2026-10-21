@@ -36,7 +36,7 @@ const EditComponent = (props: any) => {
       style={style}
       fullWidth
       hasClear
-      onChange={(changeValue) => {
+      onChange={(changeValue: unknown) => {
         setData(changeValue);
         onChange && onChange(changeValue);
       }}
@@ -45,12 +45,22 @@ const EditComponent = (props: any) => {
   );
 };
 
-const TextEditCell = (value, rowIndex, record, context, dataIndex) => {
+// editCell 回调签名（对齐 next Table 的 cell: (value, rowIndex, record, context) => node，
+// 这里额外带 dataIndex）。record 是可写行数据对象，用于就地回填编辑值。
+type EditCellFn = (
+  value: unknown,
+  rowIndex: number,
+  record: Record<string, unknown>,
+  context: unknown,
+  dataIndex: string,
+) => React.ReactNode;
+
+const TextEditCell: EditCellFn = (value, _rowIndex, record, _context, dataIndex) => {
   return (
     <EditComponent
       component={Input}
       value={value}
-      onChange={(data) => {
+      onChange={(data: unknown) => {
         record[dataIndex] = data;
         record[`origin-${dataIndex}`] = value;
       }}
@@ -58,13 +68,13 @@ const TextEditCell = (value, rowIndex, record, context, dataIndex) => {
   );
 };
 
-const NumberEditCell = (value, rowIndex, record, context, dataIndex) => {
+const NumberEditCell: EditCellFn = (value, _rowIndex, record, _context, dataIndex) => {
   return (
     <EditComponent
       component={NumberPicker}
       value={value}
       step="0.01"
-      onChange={(data) => {
+      onChange={(data: unknown) => {
         record[dataIndex] = data;
         record[`origin-${dataIndex}`] = value;
       }}
@@ -72,12 +82,12 @@ const NumberEditCell = (value, rowIndex, record, context, dataIndex) => {
   );
 };
 
-const DateEditCell = (value, rowIndex, record, context, dataIndex) => {
+const DateEditCell: EditCellFn = (value, _rowIndex, record, _context, dataIndex) => {
   return (
     <EditComponent
       component={DatePicker2}
       value={value}
-      onChange={(data) => {
+      onChange={(data: unknown) => {
         record[dataIndex] = data;
         record[`origin-${dataIndex}`] = value;
       }}
@@ -85,7 +95,7 @@ const DateEditCell = (value, rowIndex, record, context, dataIndex) => {
   );
 };
 
-const SelectEditCell = (value, rowIndex, record, context, dataIndex) => {
+const SelectEditCell: EditCellFn = (value, _rowIndex, record, _context, dataIndex) => {
   return (
     <EditComponent
       component={Select}
@@ -204,7 +214,7 @@ const SelectEditCell = (value, rowIndex, record, context, dataIndex) => {
         },
       ]}
       value={value}
-      onChange={(data) => {
+      onChange={(data: unknown) => {
         record[dataIndex] = data;
         record[`origin-${dataIndex}`] = value;
       }}
@@ -216,14 +226,14 @@ const SelectEditCell = (value, rowIndex, record, context, dataIndex) => {
  * 不同类型列的格式化方法a
  */
 export const defaultColumnFormatters: Record<
-  ProTableColumnProps['formatType'],
+  NonNullable<ProTableColumnProps['formatType']>,
   ProTableColumnFormatter
 > = {
   text: (options) => {
     return {
       cellTooltipMode: 'ellipsis',
       width: 100,
-      cell: options.cellFactory(({ value, getLabel }) => value && getLabel()),
+      cell: options.cellFactory(({ value, getLabel }) => (value ? getLabel() : null)),
       editCell: TextEditCell,
     };
   },
@@ -261,7 +271,7 @@ export const defaultColumnFormatters: Record<
   currency: (options) => ({
     cellTooltipMode: 'ellipsis',
     width: 40,
-    cell: options.cellFactory(({ value, getLabel }) => value && getLabel()),
+    cell: options.cellFactory(({ value, getLabel }) => (value ? getLabel() : null)),
     editCell: SelectEditCell,
   }),
   // OU 编码
@@ -295,7 +305,7 @@ export const defaultColumnFormatters: Record<
     cellTooltipMode: 'none',
     cell: (value) => (
       <a href="#" onClick={() => false}>
-        {value}
+        {value as React.ReactNode}
       </a>
     ),
     editCell: TextEditCell,
@@ -305,11 +315,11 @@ export const defaultColumnFormatters: Record<
     width: 90,
     cell: options.cellFactory(
       ({ value, getLabel, getCellColor }) =>
-        value && (
+        value ? (
           <Tag color={getCellColor()} size="small">
             {getLabel()}
           </Tag>
-        ),
+        ) : null,
     ),
     formatColor: undefined,
   }),
@@ -318,29 +328,45 @@ export const defaultColumnFormatters: Record<
     width: 90,
     cell: options.cellFactory(
       ({ value, getLabel, getCellColor }) =>
-        value && (
-          <Tag color={getCellColor()} size="small" shape="text" type="primary">
+        value ? (
+          // @alifd/next 的 Tag 运行期支持 shape/type，但其 .d.ts 未声明这两个属性；
+          // 保留原用法（babel 时代即如此），此处按组件真实入参透传。
+          <Tag color={getCellColor()} size="small" {...{ shape: 'text', type: 'primary' } as object}>
             {getLabel()}
           </Tag>
-        ),
+        ) : null,
     ),
     formatColor: undefined,
   }),
   files: () => ({
     cellTooltipMode: 'none',
     width: 180,
+    // @alifd/next Upload 的 listType/value/showDownloadIcon/showPreviewIcon 未在其 .d.ts
+    // 中声明（组件运行期支持），保留原用法。
     cell: (value) =>
-      value && <UploadList listType="table" value={value} showDownloadIcon showPreviewIcon />,
+      value ? (
+        <UploadList
+          {...({
+            listType: 'table',
+            value,
+            showDownloadIcon: true,
+            showPreviewIcon: true,
+          } as object)}
+        />
+      ) : null,
     formatColor: undefined,
   }),
   bankCard: () => ({
     cellTooltipMode: 'ellipsis',
     width: 183,
-    cell: formatBankCard,
+    // formatBankCard 入参是 string|number，这里按 cell 签名(value: unknown)适配
+    cell: (value) => formatBankCard(value as string | number),
   }),
   employee: () => ({
     cellTooltipMode: 'none',
     width: 160,
-    cell: (value) => value && <div dataSource={value} triggerType={['hover', 'click']} />,
+    // 该分支原本渲染的 EmployeeInfo 组件已被注释移除，这里保留占位 div 并透传数据属性。
+    cell: (value) =>
+      value ? <div {...({ dataSource: value, triggerType: ['hover', 'click'] } as object)} /> : null,
   }),
 };

@@ -39,7 +39,33 @@ import {
   ProTableRowSelectionContext,
 } from '../../contexts/pro-table-row-selection-context';
 
-export const ProTable: React.FC<ProTableProps> = (props: ProTableProps) => {
+// React 19 移除了函数组件的 defaultProps。这些默认值会经 props 透传给下游多个 hook，
+// 所以先合并默认值再使用，保持原行为。
+const PRO_TABLE_DEFAULT_PROPS: Partial<ProTableProps> = {
+  settingButtons: false,
+  defaultColumnsSetting: {},
+  columnKey: 'key',
+  primaryKey: 'id',
+  stickyLock: true,
+  resizable: true,
+  emptyContent: (
+    <Box direction="column" align="center" justify="center">
+      <img
+        style={{ height: 100, width: 150 }}
+        src="https://img.alicdn.com/imgextra/i2/O1CN01rie9sh1CmpqL3fSKD_!!6000000000124-2-tps-300-206.png"
+      />
+      暂无内容
+    </Box>
+  ),
+  hasBorder: false,
+  size: 'medium',
+  isZebra: false,
+  cellDefault: '',
+  cellTooltipMode: 'none',
+};
+
+export const ProTable: React.FC<ProTableProps> = (rawProps: ProTableProps) => {
+  const props: ProTableProps = { ...PRO_TABLE_DEFAULT_PROPS, ...rawProps };
   const slots = useProTableSlots(props);
   const columnsFiltersCtxValue = useColumnsFilterValue(props);
   const columnsSettingCtxValue = useColumnsSettingValue(props);
@@ -141,27 +167,4 @@ export const ProTable: React.FC<ProTableProps> = (props: ProTableProps) => {
       </ProTableColumnsSettingContext.Provider>
     </ProTableSettingContext.Provider>
   );
-};
-
-ProTable.defaultProps = {
-  settingButtons: false,
-  defaultColumnsSetting: {},
-  columnKey: 'key',
-  primaryKey: 'id',
-  stickyLock: true,
-  resizable: true,
-  emptyContent: (
-    <Box direction="column" align="center" justify="center">
-      <img
-        style={{ height: 100, width: 150 }}
-        src="https://img.alicdn.com/imgextra/i2/O1CN01rie9sh1CmpqL3fSKD_!!6000000000124-2-tps-300-206.png"
-      />
-      暂无内容
-    </Box>
-  ),
-  hasBorder: false,
-  size: 'medium',
-  isZebra: false,
-  cellDefault: '',
-  cellTooltipMode: 'none',
 };

@@ -67,11 +67,11 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
   hasCollapse,
   actionBar,
   collapsed,
-  onCollapse,
+  onCollapse = () => {},
   explanation,
   explanationTooltipProps,
-  hasDivider,
-  tagGroup,
+  hasDivider = true,
+  tagGroup = [],
   actionButtons,
   text,
   visibleButtonCount,
@@ -148,10 +148,4 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
     </div>
   );
 };
-CardHeader.defaultProps = {
-  onCollapse: () => {},
-  hasDivider: true,
-  tagGroup: [],
-};
-
 CardHeader.displayName = 'CardHeader';

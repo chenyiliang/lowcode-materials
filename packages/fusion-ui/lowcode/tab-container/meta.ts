@@ -1,8 +1,8 @@
-import { ComponentMetadata, Snippet } from '@ali/lowcode-types';
+import { IPublicTypeComponentMetadata, IPublicTypeSnippet } from '@alilc/lowcode-types';
 
 import props from './props';
 
-const snippets: Snippet[] = [
+const snippets: IPublicTypeSnippet[] = [
   {
     title: '选项卡',
     screenshot:
@@ -212,7 +212,7 @@ const tabItemMeta = {
   },
 };
 
-const TabContainerMeta: ComponentMetadata[] = [
+const TabContainerMeta: IPublicTypeComponentMetadata[] = [
   {
     componentName: 'TabContainer',
     title: '选项卡',

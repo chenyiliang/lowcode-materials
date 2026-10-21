@@ -10,7 +10,8 @@ import {
 } from '../../../types';
 import { useI18nBundle } from '@/provider';
 import { emptyFn } from '@/utils/constants';
-import { usePersistFn } from 'ahooks';
+// ahooks 3 起 usePersistFn 更名为 useMemoizedFn（语义一致：返回引用稳定的函数）
+import { useMemoizedFn } from 'ahooks';
 import get from 'lodash/get';
 import { ProTableButtonGroup, ProTableButtonGroupProps } from '../../pro-table-button-group/index';
 
@@ -44,7 +45,7 @@ export const useActionColumn = ({
   primaryKey,
 }: ActionColumnProps): ColumnProps => {
   const i18nBundle = useI18nBundle('ProTable');
-  const handleActionColumnClick = usePersistFn(onActionColumnClick || emptyFn);
+  const handleActionColumnClick = useMemoizedFn(onActionColumnClick || emptyFn);
   const buttonGroupProps = {
     dataSource: actionColumn,
     ...(actionColumnButtons || actionButtonGroupProps),
@@ -91,7 +92,7 @@ const ActionColumnButtonGroup: React.FC<ActionColumnButtonGroupProps> = ({
   rowIndex,
   rowRecord,
   actionColumnPredication,
-  onActionColumnClick,
+  onActionColumnClick = emptyFn,
   primaryKey,
   buttonGroupProps,
 }) => {
@@ -105,7 +106,7 @@ const ActionColumnButtonGroup: React.FC<ActionColumnButtonGroupProps> = ({
   );
   const { dataSource, ...otherProps } = buttonGroupProps;
   const realDataSource = React.useMemo<ProTableButtonGroupProps['dataSource']>(() => {
-    const buttons = is.function_(actionColumnPredication)
+    const buttons = is.function(actionColumnPredication)
       ? actionColumnPredication({
           actionColumn: dataSource,
           index: payload.rowIndex,
@@ -132,8 +133,4 @@ const ActionColumnButtonGroup: React.FC<ActionColumnButtonGroupProps> = ({
       : [];
   }, [actionColumnPredication, dataSource, onActionColumnClick, payload]);
   return <ProTableButtonGroup text payload={payload} {...otherProps} dataSource={realDataSource} />;
-};
-
-ActionColumnButtonGroup.defaultProps = {
-  onActionColumnClick: emptyFn,
 };

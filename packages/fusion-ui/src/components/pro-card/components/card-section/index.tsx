@@ -50,17 +50,17 @@ export const CardSection: React.FC<CardSectionProps> = ({
   children,
   title,
   className,
-  loading,
-  segmentLine,
+  loading = false,
+  segmentLine = false,
   actionBar,
   explanation,
   explanationTooltipProps,
-  tagGroup,
+  tagGroup = [],
   id,
-  headerDivider,
+  headerDivider = true,
   footerDivider,
   hasDividerIndent,
-  noBullet,
+  noBullet = false,
   style,
 }) => {
   // 获取 loading 状态
@@ -151,11 +151,3 @@ export const CardSection: React.FC<CardSectionProps> = ({
 };
 
 CardSection.displayName = 'CardSection';
-CardSection.defaultProps = {
-  title: null,
-  segmentLine: false,
-  loading: false,
-  tagGroup: [],
-  noBullet: false,
-  headerDivider: true,
-};

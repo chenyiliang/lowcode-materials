@@ -1,7 +1,13 @@
+import __req0__ from './__screenshots__/button-1.png';
+import __req1__ from './__screenshots__/button-2.png';
+import __req2__ from './__screenshots__/button-3.png';
+import __req3__ from './__screenshots__/button-4.png';
+import __req4__ from './__screenshots__/button-5.png';
+import __req5__ from './__screenshots__/button-6.png';
 export default [
   {
     title: '主按钮',
-    screenshot: require('./__screenshots__/button-1.png'),
+    screenshot: __req0__,
     schema: {
       componentName: 'Button',
       props: {
@@ -12,7 +18,7 @@ export default [
   },
   {
     title: '次按钮',
-    screenshot: require('./__screenshots__/button-2.png'),
+    screenshot: __req1__,
     schema: {
       componentName: 'Button',
       props: {
@@ -23,7 +29,7 @@ export default [
   },
   {
     title: '危险按钮',
-    screenshot: require('./__screenshots__/button-3.png'),
+    screenshot: __req2__,
     schema: {
       componentName: 'Button',
       props: {
@@ -34,7 +40,7 @@ export default [
   },
   {
     title: '文字按钮',
-    screenshot: require('./__screenshots__/button-4.png'),
+    screenshot: __req3__,
     schema: {
       componentName: 'Button',
       props: {
@@ -45,7 +51,7 @@ export default [
   },
   {
     title: '虚框按钮',
-    screenshot: require('./__screenshots__/button-5.png'),
+    screenshot: __req4__,
     schema: {
       componentName: 'Button',
       props: {
@@ -56,7 +62,7 @@ export default [
   },
   {
     title: '链接按钮',
-    screenshot: require('./__screenshots__/button-6.png'),
+    screenshot: __req5__,
     schema: {
       componentName: 'Button',
       props: {

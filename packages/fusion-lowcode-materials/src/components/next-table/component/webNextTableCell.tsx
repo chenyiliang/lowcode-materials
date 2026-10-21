@@ -55,7 +55,8 @@ interface IWebNextTableCellState {
 }
 
 export default class WebNextTableCell extends React.Component<IWebNextTableCellProps, IWebNextTableCellState> {
-  fieldComponentRef: React.RefObject<BaseTableField>;
+  // React 19: createRef() 返回 RefObject<T | null>，字段声明需匹配
+  fieldComponentRef: React.RefObject<BaseTableField | null>;
   constructor(props: IWebNextTableCellProps) {
     super(props);
 

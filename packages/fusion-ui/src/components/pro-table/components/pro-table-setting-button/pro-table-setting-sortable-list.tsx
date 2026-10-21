@@ -44,7 +44,7 @@ export const ProTableSettingSortableList: React.FC<ProTableSettingSortableListPr
     <ReactSortable
       handle=".fusion-ui-pro-table-setting-item__drag"
       onEnd={(e) =>
-        is.function_(onSortEnd) &&
+        is.function(onSortEnd) &&
         onSortEnd(
           e.oldIndex,
           e.newIndex,

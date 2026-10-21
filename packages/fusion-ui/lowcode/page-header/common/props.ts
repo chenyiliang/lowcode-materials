@@ -1,6 +1,6 @@
-import { FieldConfig } from '@ali/lowcode-types';
+import { IPublicTypeFieldConfig } from '@alilc/lowcode-types';
 
-const props: FieldConfig[] = [
+const props: IPublicTypeFieldConfig[] = [
   {
     name: 'title',
     title: '标题',

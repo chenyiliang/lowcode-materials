@@ -1,4 +1,5 @@
-module.exports = {
+import __req0__ from './snippets';
+export default {
   group: '原子组件',
   componentName: 'Breadcrumb',
   title: '面包屑',
@@ -252,5 +253,5 @@ module.exports = {
   },
   icon: '',
   category: '引导',
-  snippets: require('./snippets'),
+  snippets: __req0__,
 };

@@ -19,7 +19,8 @@ export const ProTableSettingButton: React.FC<ProTableSettingButtonProps> = ({
 }) => {
   const [visible, setVisible] = React.useState(false);
   const { columnsSetting } = React.useContext(ProTableColumnsSettingContext);
-  const buttonRef = useRef();
+  // React 19 要求 useRef 必须传初始值；ToggleIcon 转发的是 HTMLSpanElement ref
+  const buttonRef = useRef<HTMLSpanElement | null>(null);
   const i18nBundle = useI18nBundle('ProTable');
   const hasSetting = React.useMemo(
     () =>
@@ -42,7 +43,9 @@ export const ProTableSettingButton: React.FC<ProTableSettingButtonProps> = ({
           visible={visible}
           onRequestClose={(type) => type === 'docClick' && setVisible(false)}
           target={buttonRef.current}
-          safeNode={buttonRef.current}
+          // @alifd/next 把 safeNode 声明为 ReactNode，但运行期与 target 一样接受 DOM 节点；
+          // 其 .d.ts 类型偏窄，这里按真实契约传值并做一次断言（不放宽为 any）。
+          safeNode={buttonRef.current as unknown as React.ReactNode}
           offset={[8, 8]}
           {...sortOverlayProps}
         />

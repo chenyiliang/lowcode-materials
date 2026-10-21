@@ -1,4 +1,5 @@
-module.exports = {
+import __req0__ from './snippets';
+export default {
   group: '原子组件',
   componentName: 'Form',
   title: '表单容器',
@@ -419,5 +420,5 @@ module.exports = {
 
   icon: 'https://img.alicdn.com/tfs/TB1oH02u2b2gK0jSZK9XXaEgFXa-112-64.png',
   category: '信息输入',
-  snippets: require('./snippets'),
+  snippets: __req0__,
 };

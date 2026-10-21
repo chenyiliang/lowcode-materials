@@ -23,6 +23,11 @@ export interface FusionEllipsisProps {
    * tooltip 属性覆盖
    */
   tooltipProps?: any;
+  /**
+   * 子元素。@types/react 19 起类组件 props 不再隐式包含 children，需显式声明。
+   * ellipsisPosition="middle" 时期望为字符串（会对 children 做 substr 截断）。
+   */
+  children?: React.ReactNode;
 }
 
 interface FusionEllipsisState {
@@ -38,9 +43,9 @@ export class Ellipsis extends React.Component<FusionEllipsisProps, FusionEllipsi
     hasTooltip: true,
   };
 
-  private textRef;
+  private textRef: HTMLElement | null = null;
 
-  constructor(props) {
+  constructor(props: FusionEllipsisProps) {
     super(props);
     this.state = {
       isOverflow: false,
@@ -69,7 +74,7 @@ export class Ellipsis extends React.Component<FusionEllipsisProps, FusionEllipsi
     }
   };
 
-  saveTextRef = (ref) => {
+  saveTextRef = (ref: HTMLElement | null) => {
     this.textRef = ref;
   };
 
@@ -79,7 +84,7 @@ export class Ellipsis extends React.Component<FusionEllipsisProps, FusionEllipsi
       children,
       className,
       ellipsisPosition,
-      endCharCount,
+      endCharCount = 8,
       hasTooltip,
       tooltipProps,
       ...otherProps
@@ -87,7 +92,8 @@ export class Ellipsis extends React.Component<FusionEllipsisProps, FusionEllipsi
 
     const classes = cx({
       'fusion-ui-ellipsis': true,
-      [className]: !!className,
+      // className 可能为 undefined，计算属性名不能是 undefined，故仅在存在时加入
+      ...(className ? { [className]: true } : {}),
     });
 
     // 默认
@@ -99,8 +105,8 @@ export class Ellipsis extends React.Component<FusionEllipsisProps, FusionEllipsi
       </div>
     );
 
-    // 省略号出现在中间
-    if (isOverflow && ellipsisPosition === 'middle') {
+    // 省略号出现在中间（此分支要求 children 为字符串，对其做 substr 截断）
+    if (isOverflow && ellipsisPosition === 'middle' && typeof children === 'string') {
       const startChildren = children.substr(0, children.length - endCharCount);
       const endChildren = children.substr(-endCharCount);
       trigger = (
@@ -139,7 +145,7 @@ export interface TextClipProps {
   line?: number;
 }
 
-export const TextClip: React.FC<TextClipProps> = ({ children, style, line, className }) => {
+export const TextClip: React.FC<TextClipProps> = ({ children, style, line = 2, className }) => {
   return (
     <div className="fusion-ui-text-clip">
       <div
@@ -151,10 +157,6 @@ export const TextClip: React.FC<TextClipProps> = ({ children, style, line, class
       </div>
     </div>
   );
-};
-
-TextClip.defaultProps = {
-  line: 2,
 };
 
 TextClip.displayName = 'TextClip';

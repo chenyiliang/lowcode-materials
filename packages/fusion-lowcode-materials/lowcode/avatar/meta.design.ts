@@ -1,3 +1,4 @@
+import __req0__ from './snippets';
 export default {
   group: '原子组件',
   componentName: 'Avatar',
@@ -213,5 +214,5 @@ export default {
   },
   icon: '',
   category: '信息展示',
-  snippets: require('./snippets'),
+  snippets: __req0__,
 };

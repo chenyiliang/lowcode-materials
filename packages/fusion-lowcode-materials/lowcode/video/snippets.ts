@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     title: '视频',
     screenshot:

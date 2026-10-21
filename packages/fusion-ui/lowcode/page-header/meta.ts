@@ -1,8 +1,8 @@
-import { ComponentMetadata, Snippet } from '@ali/lowcode-types';
+import { IPublicTypeComponentMetadata, IPublicTypeSnippet } from '@alilc/lowcode-types';
 import { operations } from '../common';
 import props from './common/props';
 
-const PageHeaderMeta: ComponentMetadata = {
+const PageHeaderMeta: IPublicTypeComponentMetadata = {
   componentName: 'PageHeader',
   category: '布局容器类',
   group: '精选组件',
@@ -207,7 +207,7 @@ const PageHeaderMeta: ComponentMetadata = {
   },
 };
 
-const snippets: Snippet[] = [
+const snippets: IPublicTypeSnippet[] = [
   {
     title: '页头',
     screenshot:

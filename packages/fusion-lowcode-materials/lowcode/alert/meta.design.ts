@@ -1,3 +1,4 @@
+import __req0__ from './snippets';
 export default {
   group: '原子组件',
   componentName: 'Message',
@@ -424,5 +425,5 @@ export default {
   },
   icon: '',
   category: '信息反馈',
-  snippets: require('./snippets'),
+  snippets: __req0__,
 };

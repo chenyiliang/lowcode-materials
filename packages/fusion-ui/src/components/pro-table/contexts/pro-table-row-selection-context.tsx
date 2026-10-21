@@ -81,7 +81,7 @@ export const useProTableRowSelectionValue = ({
       defaultValue: rowSelection.defaultSelectedRowKeys || [],
       onChange: (keys, isReverseSelection) => {
         setReverseSelection(isReverseSelection);
-        if (is.function_(rowSelection.onChange)) {
+        if (is.function(rowSelection.onChange)) {
           const keysSet = new Set(keys);
           const selectedRecords = isReverseSelection
             ? dataSource.filter((vo) => !keysSet.has(getRowKeyByRecord(vo)))
@@ -102,7 +102,7 @@ export const useProTableRowSelectionValue = ({
   const { getProps } = rowSelection;
   /** 当前页disabledKeys */
   const currentPageDisableKeys = useMemo(() => {
-    if (!is.function_(getProps)) {
+    if (!is.function(getProps)) {
       return emptyArray;
     }
     return flattedDataSource

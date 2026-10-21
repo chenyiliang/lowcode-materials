@@ -10,7 +10,7 @@ export interface CardButtonGroupProps {
   text?: boolean;
 }
 
-export const CardButtonGroup: React.FC<CardButtonGroupProps> = ({ dataSource, text }) => {
+export const CardButtonGroup: React.FC<CardButtonGroupProps> = ({ dataSource = [], text }) => {
   return (
     <>
       {dataSource.map(({ label, onClick, ...rest }) => {
@@ -22,10 +22,6 @@ export const CardButtonGroup: React.FC<CardButtonGroupProps> = ({ dataSource, te
       })}
     </>
   );
-};
-
-CardButtonGroup.defaultProps = {
-  dataSource: [],
 };
 
 export default CardButtonGroup;

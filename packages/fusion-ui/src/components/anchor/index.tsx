@@ -42,7 +42,9 @@ export interface AnchorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   /**
    * 容器，默认是 window
    */
-  container?: () => React.ReactElement<any, string | React.JSXElementConstructor<any>> | Element;
+  // 修正：原类型写的是 React.ReactElement（虚拟元素），但实现里 getScrollElement 返回的是
+  // 真实 DOM Element，且找不到可滚动元素时回退为 window。按真实返回类型声明为 Element | Window。
+  container?: () => Element | Window;
   /**
    * direction="hoz" 生效
    * 开启可在滚动超出屏幕后固定在屏幕
@@ -77,7 +79,7 @@ export interface AnchorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   containerRef?: any;
 }
 
-function getScrollElement(element: HTMLElement) {
+function getScrollElement(element: HTMLElement | null): HTMLElement | null {
   if (!element) return element;
   if (elementCanScroll(element)) {
     return element;
@@ -116,7 +118,8 @@ export class Anchor extends React.Component<AnchorProps> {
     },
   };
 
-  ref = React.createRef();
+  // React 19 要求 createRef 传类型参数
+  ref = React.createRef<HTMLElement>();
 
   render() {
     const { direction, isWhalePageAnchor, ...otherProps } = this.props;
@@ -124,8 +127,11 @@ export class Anchor extends React.Component<AnchorProps> {
     otherProps.container = otherProps.container
       ? otherProps.container
       : () => {
-
-          let container = getScrollElement(this.ref?.current || document.querySelector('[class^="fusion-ui-anchor"]'));
+          const scrollElement = getScrollElement(
+            this.ref?.current ?? (document.querySelector('[class^="fusion-ui-anchor"]') as HTMLElement | null),
+          );
+          // 找不到可滚动元素（或就是文档根）时回退为 window，与 Affix container 契约一致
+          let container: Element | Window = scrollElement ?? document.documentElement;
           if (!container || container === document.documentElement) {
             container = window;
           }

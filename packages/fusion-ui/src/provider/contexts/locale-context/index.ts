@@ -110,10 +110,20 @@ export const useLocaleContextValue = (
  * @param componentName 组件名称，如tablex
  * @returns 当前组件的文案集合
  */
-export const useI18nBundle = <Name extends I18nBundlesNames>(componentName: Name) => {
+export function useI18nBundle<Name extends I18nBundlesNames>(
+  componentName: Name,
+): ComponentI18nBundleType<Name>;
+// 允许传 undefined（如 GlobalConfigProvider 未指定 i18nBundleName 时）；
+// hook 仍无条件调用，满足 rules of hooks，仅返回 undefined。
+export function useI18nBundle(componentName: undefined): undefined;
+// 调用点传入的是「可能是 undefined 的名字」时的联合重载
+export function useI18nBundle<Name extends I18nBundlesNames>(
+  componentName: Name | undefined,
+): ComponentI18nBundleType<Name> | undefined;
+export function useI18nBundle<Name extends I18nBundlesNames>(componentName?: Name) {
   const { getI18nBundle } = useContext(LocaleContext);
-  return useMemo<ComponentI18nBundleType<Name>>(
-    () => getI18nBundle(componentName),
+  return useMemo(
+    () => (componentName === undefined ? undefined : getI18nBundle(componentName)),
     [componentName, getI18nBundle],
   );
-};
+}

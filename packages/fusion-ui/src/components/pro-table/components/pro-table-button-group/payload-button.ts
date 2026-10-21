@@ -25,16 +25,16 @@ function isPayloadButtonTruth<Payload>(
   cb: boolean | ((payload?: Payload) => boolean),
   payload?: Payload,
 ): boolean {
-  return is.function_(cb) ? cb(payload) : cb;
+  return is.function(cb) ? cb(payload) : cb;
 }
 
 export const usePayloadButtons = <Payload = unknown>(
-  buttons: Array<PayloadButtonProps<Payload>>,
+  buttons: Array<PayloadButtonProps<Payload>> | undefined,
   payload: Payload,
 ) =>
   React.useMemo(
     () =>
-      buttons
+      (buttons ?? [])
         .filter((vo) =>
           is.nullOrUndefined(vo.hidden) ? true : !isPayloadButtonTruth(vo.hidden, payload),
         )
@@ -44,7 +44,7 @@ export const usePayloadButtons = <Payload = unknown>(
             ? false
             : isPayloadButtonTruth(vo.disabled, payload),
           hidden: undefined,
-          onClick: vo.onClick && ((e) => vo.onClick(e, payload)),
+          onClick: vo.onClick && ((e: React.MouseEvent<Element>) => vo.onClick?.(e, payload)),
         })),
     [buttons, payload],
   );
